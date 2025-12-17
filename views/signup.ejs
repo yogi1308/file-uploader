@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign Up | Basic Drive</title>
+    <link rel='stylesheet' href='styles/styles.css' />
+    <link rel="shortcut icon" href="/icons/favicon.svg" type="image/x-icon">
+  </head>
+  <body>
+    <div class="signup-div">
+        <h1>Create a new account</h1>
+        <form action="/signup" method="POST" class="signup-form" autocomplete="off">
+            <div class="input-div">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="<%= locals.userInput ? userInput.username : '' %>" required>
+            </div>
+            <div class="input-div">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" autocomplete="new-password" oninput="checkPasswordMatch(); checkPassword(value); enableSubmit()" required>
+                <div class="error-password" style="color: red;"></div>
+            </div>
+            <div class="input-div">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" oninput="checkPasswordMatch(); checkPassword(document.getElementById('password').value); enableSubmit()" required>
+            </div>
+          <button type="submit" disabled>Sign up</button>
+        </form>
+        <p>Already have an account? <a href="/login">Login</a></p>
+    </div>
+    <script>
+      function checkPasswordMatch() {
+        pass = document.getElementById('password').value
+        confirmPassElem = document.getElementById('confirmPassword')
+        confirmPass = document.getElementById('confirmPassword').value
+        if (confirmPass === "" || pass === "") {return}
+        if (pass === confirmPass) {
+          confirmPassElem.style.border = '1px solid green'
+          confirmPassElem.style.outline = '1px solid green'
+          return true
+        }
+        else {
+          confirmPassElem.style.border = '1px solid red'
+          confirmPassElem.style.outline = '1px solid red'
+          return false
+        }
+      }
+
+      function enableSubmit() {
+        submitButton = document.querySelector('button')
+        if (checkPassword(document.getElementById('password').value) && checkPasswordMatch()) {
+          submitButton.disabled = false;
+          submitButton.style.cursor = 'pointer'
+        }
+        else {
+          submitButton.disabled = true;
+          submitButton.style.cursor = 'default'
+        }
+      }
+
+      function checkPassword(pass) {
+        confirmPassElem = document.getElementById('confirmPassword')
+        confirmPass = document.getElementById('confirmPassword').value
+        const errorElm = document.querySelector(".error-password")
+        const passElm = document.getElementById('password')
+        const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
+        errorElm.textContent = ""
+        let valid = true
+        if (pass.length < 8) {
+          errorElm.textContent = "Password must be at least 8 characters long.\n"
+          valid = false
+        }
+        if (!specialChars.test(pass)) {
+          errorElm.textContent += "Password must have at least 1 special character.\n"
+          valid = false
+        }
+        if (!/[A-Z]/.test(pass) || !/[a-z]/.test(pass)) {
+          errorElm.textContent += "Password must have at least 1 uppercase and lowercase character.\n"
+          valid = false
+        }
+        if (!/[0-9]/.test(pass)) {
+          errorElm.textContent += "Password must have at least 1 numerical character."
+          valid = false
+        }
+        if (valid) {
+          errorElm.textContent = ""
+          passElm.style.border = '1px solid green'
+          passElm.style.outline = '1px solid green'
+          return true 
+        }
+        else {
+          passElm.style.border = '1px solid red'
+          passElm.style.outline = '1px solid red'
+          errorElm.style.whiteSpace = "pre-wrap"
+          return false
+        }
+        if (!valid && confirmPass !== "" && pass !== "" && pass === confirmPass) {
+          passElm.style.border = '1px solid red'
+          passElm.style.outline = '1px solid red'
+          errorElm.style.whiteSpace = "pre-wrap"
+          confirmPassElem.style.border = '1px solid red'
+          confirmPassElem.style.outline = '1px solid red'
+          return false
+        }
+      }
+    </script>
+  </body>
+</html>

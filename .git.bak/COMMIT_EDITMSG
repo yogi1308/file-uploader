@@ -1,0 +1,15 @@
+Fix signup validation logic and UI feedback
+
+Server-side changes (routes/index.js):
+- Update express-validator error handling to support both v6 (`param`) and v7 (`path`) properties, preventing undefined error keys.
+- Enhance password validation chain: added `.bail()` to prevent cascading errors if length check fails.
+- Add specific regex validators for password complexity: special characters, mixed case (upper/lower), and numbers.
+
+Client-side changes (views/signup.ejs):
+- Refactor `checkPassword` function:
+  - Fix syntax error: changed `pass.length()` to `pass.length`.
+  - Fix logic error: converted `specialChars` from a string array to a RegExp for correct `.test()` usage.
+  - Change control flow from `else if` to independent `if` statements to allow accumulating multiple error messages.
+  - Add `white-space: pre-wrap` to the error container to correctly render newlines.
+- Improve variable scoping by declaring variables with `const` and `let`.
+- Ensure the submit button disabled state correctly reflects the validity of both password complexity and matching.

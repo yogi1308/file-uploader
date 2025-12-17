@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login | Basic Drive</title>
+    <link rel='stylesheet' href='styles/styles.css' />
+    <link rel="shortcut icon" href="/icons/favicon.svg" type="image/x-icon">
+  </head>
+  <body>
+    <div class="login-div">
+        <h1>Welcome back</h1>
+        <form action="/login" method="POST" class="login-form">
+          <div class="input-div">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+          </div>
+          <div class="input-div">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="/signup">Sign up</a></p>
+    </div>
+  </body>
+</html>

@@ -14,8 +14,18 @@ datasource db {
 }
 
 model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String   
+  id          String   @id
+  sid         String   @unique
+  data        String   
   expiresAt   DateTime
+
+  @@map("session")
+}
+
+model User {
+  id            String      @id @default(uuid())
+  username      String
+  password      String
+
+  @@map("users")
 }

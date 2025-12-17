@@ -2,11 +2,11 @@ require("dotenv").config();
 const express = require("express")
 const path = require("node:path")
 const indexRouter = require('./routes/index')
-const session = require("express-session");
 const passport = require("passport");
 require('./config/passport')(passport)
-const pgSession = require('connect-pg-simple')(session);
-const { Pool } = require('pg');
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+const expressSession = require("express-session");
+const prisma = require("./lib/prisma");
 
 const app = express()
 
@@ -17,20 +17,25 @@ app.use(express.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-const sessionPool = new Pool({
-  connectionString: process.env.DATABASE_URI
-});
-
-app.use(session({ 
-//   store: new pgSession({
-//     pool: sessionPool,
-//     createTableIfMissing: true
-//   }),
-  secret: process.env.SESSION_SECRET, 
-  resave: false, 
-  saveUninitialized: false
-}));
-app.use(passport.session());
+app.use(
+  expressSession({
+    cookie: {
+     maxAge: 7 * 24 * 60 * 60 * 1000 // ms
+    },
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(
+      prisma,
+      {
+        checkPeriod: 2 * 60 * 1000,  //ms
+        dbRecordIdIsSessionId: true,
+        dbRecordIdFunction: undefined,
+      }
+    )
+  })
+);
+app.use(passport.session())
 
 app.use("/", indexRouter)
 
