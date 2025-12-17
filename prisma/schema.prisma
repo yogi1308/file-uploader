@@ -29,3 +29,14 @@ model User {
 
   @@map("users")
 }
+
+model Files {
+  id           String   @id
+  name         String   @unique
+  date         DateTime   
+  type         String
+  starred      Boolean  @db.Boolean
+  pinned      Boolean  @db.Boolean
+
+  @@map("files")
+}

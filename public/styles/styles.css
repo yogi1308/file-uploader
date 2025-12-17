@@ -159,14 +159,15 @@ navbar {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.pagination {
+    overflow-y: hidden;
+  }
+  
+  .pagination {
     margin: 10px 0px;
     border-radius: 5px;
-}
+  }
 
-.filters {
+  .filters {
     display: flex;
     gap: 10px;
 }
@@ -191,38 +192,40 @@ navbar {
     padding: 5px;
     align-items: center;
     gap: 10px;
-}
-
-.list-header {padding: 0px; margin-bottom: 5px;}
-
-.list-header > .col-size {transform: translateX(-7px);}
-
-.list-header > .col-type {transform: translateX(-5px);}
-
-.list-header > .col-date {transform: translateX(-3px);}
-
-.list-row {
+  }
+  
+  .list-header {padding: 0px; margin-bottom: 5px;}
+  
+  .list-header > .col-size {transform: translateX(-7px);}
+  
+  .list-header > .col-type {transform: translateX(-5px);}
+  
+  .list-header > .col-date {transform: translateX(-3px);}
+  
+  .list-row {
     border: 1px solid #6c6c74;
     padding: 8.34px;
     background-color: #1a1a1e;
     transition: background-color 0.2s;
     border-radius: 5px;
+  }
+  
+  .list-row-container {
+    height: calc(100% - 12.5rem);
+    overflow-y: auto;
 }
 
-.sidebar::-webkit-scrollbar {
-    width: 6px;
+::-webkit-scrollbar {
+    width: 3px;
 }
 
-.sidebar::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: transparent;
-    margin-block: 12px;
 }
 
-.sidebar::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: #6c6c74;
     border-radius: 3px;
-    border-right: 4px solid transparent;
-    background-clip: padding-box;
 }
 
 
