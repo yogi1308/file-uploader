@@ -121,6 +121,7 @@ navbar {
     margin-bottom: 10px;
     text-align: center;
     width: 100%;
+    cursor: pointer;
 }
 
 .categories {
@@ -135,6 +136,7 @@ navbar {
     gap: 5px;
     align-items: center;
     width: 100%;
+    cursor: pointer;
 }
 
 .categories > div > * {
@@ -152,7 +154,58 @@ navbar {
 }
 
 .main {
-    width: 100%;
+    width: calc(100% - 20px);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pagination {
+    margin: 10px 0px;
+    border-radius: 5px;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+}
+
+.filters > * {
+    border: 1px solid #6c6c74;
+    border-radius: 5px;
+    width: calc(100% - 20px);
+    padding: 10px 0px;
+    text-align: center;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.list-header, .list-row {
+    display: grid;
+    grid-template-columns: 6fr 2fr 1fr 1fr; /* Matches the 60/20/10/10 ratio */
+    padding: 5px;
+    align-items: center;
+    gap: 10px;
+}
+
+.list-header {padding: 0px; margin-bottom: 5px;}
+
+.list-header > .col-size {transform: translateX(-7px);}
+
+.list-header > .col-type {transform: translateX(-5px);}
+
+.list-header > .col-date {transform: translateX(-3px);}
+
+.list-row {
+    border: 1px solid #6c6c74;
+    padding: 8.34px;
+    background-color: #1a1a1e;
+    transition: background-color 0.2s;
     border-radius: 5px;
 }
 
@@ -182,7 +235,7 @@ navbar {
 
 
 
-/* From Uiverse.io by kennyotsu-monochromia */ 
+/* From Uiverse.io by kennyotsu-monochromia */
 .Btn {
   display: flex;
   align-items: center;
