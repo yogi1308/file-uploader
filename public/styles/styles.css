@@ -184,6 +184,8 @@ navbar {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    flex: 1;
+    min-height: 0;
 }
 
 .list-header, .list-row {
@@ -209,10 +211,15 @@ navbar {
     transition: background-color 0.2s;
     border-radius: 5px;
   }
+
+  .list {display:flex; flex-direction: column; height: 100%;}
   
   .list-row-container {
-    height: calc(100% - 12.5rem);
+    flex: 1;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 ::-webkit-scrollbar {
