@@ -28,7 +28,7 @@ router.get("/signup", (req, res) => {
 });
 
 router.get("/", isAuthenticated, (req, res) => {
-  res.render("index")
+  res.render("index", { user: req.user })
 })
 
 router.post("/signup",

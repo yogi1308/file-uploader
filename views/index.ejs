@@ -8,6 +8,10 @@
     <link rel="shortcut icon" href="/icons/favicon.svg" type="image/x-icon">
 </head>
 <body>
-    <%- include('navbar') %>
+    <div class="index">
+        <%- include('navbar') %>
+        <%- include('sidebar', {user: user})%>
+        <%- include('main', {user: user})%>
+    </div>
 </body>
 </html>
