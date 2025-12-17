@@ -32,11 +32,12 @@ model User {
 
 model Files {
   id           String   @id
+  url          String   
   name         String   @unique
   date         DateTime   
   type         String
   starred      Boolean  @db.Boolean
-  pinned      Boolean  @db.Boolean
+  pinned       Boolean  @db.Boolean
 
   @@map("files")
 }

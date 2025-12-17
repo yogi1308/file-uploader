@@ -1,0 +1,29 @@
+<dialog>
+    <form action="/upload" method="post" class="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" id="file" multiple>
+        <div id="file-list"></div>
+        <div class="file-form">
+            <button type="submit">Upload</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog').close()">Cancel</button>
+        </div>
+    </form>
+    <script>
+        const fileInput = document.getElementById('file');
+        const fileList = document.getElementById('file-list');
+
+        fileInput.addEventListener('change', () => {
+            fileList.innerHTML = '';
+            Array.from(fileInput.files).forEach(file => {
+                const item = document.createElement('div');
+                const itemName = document.createElement('p');
+                const itemType = document.createElement('p');
+                itemName.textContent = file.name;
+                itemType.textContent = file.name.slice(file.name.lastIndexOf('.') + 1).toUpperCase();
+                console.log(file)
+                item.appendChild(itemName);
+                item.appendChild(itemType);
+                fileList.appendChild(item);
+            });
+        });
+    </script>
+</dialog>

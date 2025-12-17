@@ -54,6 +54,16 @@ input:focus {
     outline: 1px solid white;
 }
 
+input[type="file"]::file-selector-button {
+    background-color: transparent;
+    border: 0px;
+    color: #a6e3ff;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #6c6c74;
+}
+
 a {
     color: #a6e3ff;
     text-decoration: underline;
@@ -122,6 +132,19 @@ navbar {
     text-align: center;
     width: 100%;
     cursor: pointer;
+    gap: 5px;
+}
+
+.upload > div > button {
+  width: 100%;
+}
+
+#file {
+  text-align-last: center;
+  background-color: transparent;
+  border: 1px solid #6c6c74;
+  border-radius: 5px;
+
 }
 
 .categories {
@@ -222,8 +245,73 @@ navbar {
     gap: 5px;
 }
 
+.file-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+}
+
+.file-form > button {
+  margin: 0px;
+  width: 100%
+}
+
+dialog {
+    background: rgb(18, 18, 18);
+    border: 1px solid #6c6c74;
+    border-radius: 5px;
+    flex-direction: column;
+    padding: 20px;
+    color: white;
+    gap: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 80vw;
+}
+
+dialog[open] {
+    display: flex;
+
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+#file-list {
+  display: flex;
+  gap: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-bottom: 5px;
+}
+
+#file-list > * {
+  padding: 5px;
+  background-color: #1a1a1e;
+    border: 1px solid #6c6c74;
+    border-radius: 5px;
+    max-width: 5rem;
+}
+
+#file-list > * > p {
+  font-size: 0.9rem;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+#file-list > *:first-child {
+  text-wrap: nowrap;
+}
+
 ::-webkit-scrollbar {
     width: 3px;
+    height: 3px;
 }
 
 ::-webkit-scrollbar-track {
