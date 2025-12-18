@@ -27,17 +27,23 @@ model User {
   username      String
   password      String
 
+  files         Files[]
+  
+
   @@map("users")
 }
 
 model Files {
-  id           String   @id
+  id           String   @id @default(uuid())
   url          String   
-  name         String   @unique
-  date         DateTime   
+  name         String
+  date         DateTime  
   type         String
-  starred      Boolean  @db.Boolean
-  pinned       Boolean  @db.Boolean
+  starred      Boolean  @db.Boolean @default(false)
+  pinned       Boolean  @db.Boolean @default(false)
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("files")
 }

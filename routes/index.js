@@ -3,7 +3,11 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate } = require("../lib/queries");
+const multer  = require('multer')
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+const uploadToCloudinary = require("../upload/cloudinary")
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -79,5 +83,18 @@ router.post("/signup",
             return next(error);
         }
 });
+
+router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
+  try {
+    // console.log(req.user, req.uploads)
+    await postUploadDbUpdate(req.user.id, req.uploads)
+
+    res.redirect("/")
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).send("Error uploading files")
+  }
+})
 
 module.exports = router
