@@ -249,7 +249,7 @@ navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 }
 
 .file-form > button {
@@ -266,9 +266,6 @@ dialog {
     color: white;
     gap: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     max-width: 80vw;
 }
 
@@ -285,10 +282,14 @@ dialog::backdrop {
 
 #file-list {
   display: flex;
-  gap: 5px;
+  gap: 10px;
   max-height: 150px;
   overflow-y: auto;
-  padding-bottom: 5px;
+  padding: 10px 0px;
+}
+
+#file-list:empty {
+    display: none;
 }
 
 #file-list > * {
@@ -305,8 +306,31 @@ dialog::backdrop {
   text-overflow: ellipsis;
 }
 
-#file-list > *:first-child {
+#file-list > * {
   text-wrap: nowrap;
+      max-width: 8.5rem;
+    height: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.delete-file {
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: min-content;
+    height: min-content;
+    padding: 3px;
+    background-color: #1a1a1e;
+    border: 1px solid #6c6c74;
+    border-radius: 5px;
+    /* aspect-ratio: 1 / 1; */
+    line-height: 0.5rem;
+    /* z-index: 100; */
+    font-size: 0.7rem;
+    cursor: pointer;
 }
 
 ::-webkit-scrollbar {

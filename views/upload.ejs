@@ -11,19 +11,35 @@
         const fileInput = document.getElementById('file');
         const fileList = document.getElementById('file-list');
 
-        fileInput.addEventListener('change', () => {
+        fileInput.addEventListener('change', renderFiles);
+
+        function renderFiles() {
+            console.log(fileInput.files)
             fileList.innerHTML = '';
-            Array.from(fileInput.files).forEach(file => {
+            Array.from(fileInput.files).forEach((file, index) => {
                 const item = document.createElement('div');
                 const itemName = document.createElement('p');
                 const itemType = document.createElement('p');
+                const close = document.createElement('div');
+                close.classList.add('delete-file')
+                item.classList.add('uploaded-file')
                 itemName.textContent = file.name;
                 itemType.textContent = file.name.slice(file.name.lastIndexOf('.') + 1).toUpperCase();
-                console.log(file)
+                close.textContent = "x"
                 item.appendChild(itemName);
                 item.appendChild(itemType);
+                item.appendChild(close)
                 fileList.appendChild(item);
+
+                close.addEventListener('click', () => {
+                    const dt = new DataTransfer();
+                    const files = Array.from(fileInput.files);
+                    const remainingFiles = files.filter((_, i) => i !== index);
+                    remainingFiles.forEach(file => dt.items.add(file));
+                    fileInput.files = dt.files;
+                    renderFiles();
+                });
             });
-        });
+        }
     </script>
 </dialog>
