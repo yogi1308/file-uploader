@@ -355,7 +355,15 @@ dialog::backdrop {
     text-wrap-mode: nowrap;
 }
 
+.name-and-svg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 
+.name-and-svg > svg {
+  height: 1rem;
+}
 
 
 
