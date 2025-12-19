@@ -1,0 +1,10 @@
+<dialog class="new-folder-dialog" style="width: 40vw;">
+    <form action="/upload-folder" method="post" class="upload-form">
+        <label for="folder-name">Folder Name</label>
+        <input type="text" name="folder-name" id="folder-name" maxlength="100">
+        <div class="file-form">
+            <button type="submit">Create</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog.new-folder-dialog').close()">Cancel</button>
+        </div>
+    </form>
+</dialog>
