@@ -34,7 +34,7 @@ const uploadToCloudinary = async (req, res, next) => {
         break;
       }
     }
-    uploadURLS.push({name: result.public_id, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder});
+    uploadURLS.push({name: result.public_id, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes});
   }
   req.uploads = uploadURLS
   next()

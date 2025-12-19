@@ -3,11 +3,18 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
-const upload = multer({ storage: storage })
-const uploadToCloudinary = require("../upload/cloudinary")
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 4 * 1024 * 1024, // Limit file size to 10MB
+    files: 5 // Limit to 5 files per upload
+  }
+})
+const uploadToCloudinary = require("../upload/cloudinary");
+const { user } = require("../lib/prisma");
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -38,8 +45,9 @@ router.get("/signup", (req, res) => {
   res.render("signup")
 });
 
-router.get("/", isAuthenticated, (req, res) => {
-  res.render("index", { user: req.user })
+router.get("/", isAuthenticated, async (req, res) => {
+  const userFiles = await getUserFiles(req.user.id)
+  res.render("index", { user: req.user , files: {userFiles}})
 })
 
 router.post("/signup",
@@ -86,9 +94,7 @@ router.post("/signup",
 
 router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
   try {
-    // console.log(req.user, req.uploads)
     await postUploadDbUpdate(req.user.id, req.uploads)
-
     res.redirect("/")
   }
   catch (error) {

@@ -41,6 +41,7 @@ model Files {
   type         String
   starred      Boolean  @db.Boolean @default(false)
   pinned       Boolean  @db.Boolean @default(false)
+  size         Int
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)

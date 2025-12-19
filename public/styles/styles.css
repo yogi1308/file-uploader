@@ -7,6 +7,8 @@ h1 {
 
 p {margin: 0px}
 
+button {cursor: pointer;}
+
 body {
     background-color: rgb(18, 18, 18);
     color: white;
@@ -347,6 +349,11 @@ dialog::backdrop {
     border-radius: 3px;
 }
 
+.col-name {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    text-wrap-mode: nowrap;
+}
 
 
 

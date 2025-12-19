@@ -12,12 +12,14 @@
             <div class="col-size">Size</div>
         </div>
         <div class="list-row-container">
-            <div class="list-row">
-                <div class="col-name">gtgtgt</div>
-                <div class="col-date">gtgtgt</div>
-                <div class="col-type">gtgtgt</div>
-                <div class="col-size">gtgtgt</div>
-            </div>
+            <% files.userFiles.forEach(file => { %>
+                <div class="list-row">
+                    <div class="col-name"><%= file.name.slice(0, file.name.lastIndexOf('.')) %></div>
+                    <div class="col-date"><%= new Date(file.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
+                    <div class="col-type"><%= file.type %></div>
+                    <div class="col-size"><%= (file.size / (1024 * 1024)).toFixed(2) %> MB</div>
+                </div>
+            <% }) %>
         </div>
     </div>
 </div>

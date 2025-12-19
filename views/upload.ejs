@@ -16,6 +16,23 @@
         function renderFiles() {
             console.log(fileInput.files)
             fileList.innerHTML = '';
+
+            if (fileInput.files.length > 5) {
+                alert("You can only upload a maximum of 5 files at a time.");
+                fileInput.value = ""; // Clear the selection
+                return;
+            }
+
+            const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 10MB
+            const totalSize = Array.from(fileInput.files).reduce((acc, file) => acc + file.size, 0);
+            console.log(totalSize)
+            if (totalSize > MAX_TOTAL_SIZE) {
+                alert("Total size of all files combined cannot exceed 3MB.");
+                fileInput.value = "";
+                return;
+            }
+            console.log(totalSize)
+
             Array.from(fileInput.files).forEach((file, index) => {
                 const item = document.createElement('div');
                 const itemName = document.createElement('p');

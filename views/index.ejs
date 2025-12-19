@@ -11,7 +11,8 @@
     <div class="index">
         <%- include('navbar') %>
         <%- include('sidebar', {user: user})%>
-        <%- include('main', {user: user})%>
+        <%- console.log(files) %>
+        <%- include('main', {user: user, files: files}) %>
         <%- include('upload')%>
     </div>
 </body>
