@@ -14,7 +14,6 @@
         fileInput.addEventListener('change', renderFiles);
 
         function renderFiles() {
-            console.log(fileInput.files)
             fileList.innerHTML = '';
 
             if (fileInput.files.length > 5) {
@@ -31,8 +30,6 @@
                 fileInput.value = "";
                 return;
             }
-            console.log(totalSize)
-
             Array.from(fileInput.files).forEach((file, index) => {
                 const item = document.createElement('div');
                 const itemName = document.createElement('p');

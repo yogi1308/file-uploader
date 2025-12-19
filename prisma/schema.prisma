@@ -28,6 +28,7 @@ model User {
   password      String
 
   files         Files[]
+  folders       Folder[]
   
 
   @@map("users")
@@ -47,4 +48,15 @@ model Files {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("files")
+}
+
+model Folder {
+  id   String @id @default(uuid())
+  path String
+  name String
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("folder")
 }

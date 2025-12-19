@@ -11,10 +11,15 @@
     <div class="index">
         <%- include('navbar') %>
         <%- include('sidebar', {user: user})%>
-        <%- console.log(files) %>
         <%- include('main', {user: user, files: files}) %>
         <%- include('upload')%>
-        <%- include('new-folder-dialog')%>
+        <%- include('new-folder-dialog', {user: user})%>
     </div>
+    <% if (locals.error) { %>
+        <script>
+            alert("<%= error %>");
+            document.querySelector('.new-folder-dialog').showModal();
+        </script>
+    <% } %>
 </body>
 </html>
