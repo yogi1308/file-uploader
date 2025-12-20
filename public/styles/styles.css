@@ -349,7 +349,7 @@ dialog::backdrop {
     border-radius: 3px;
 }
 
-.col-name {
+.col-name, .col-date, .col-type, .col-size {
     overflow-x: hidden;
     text-overflow: ellipsis;
     text-wrap-mode: nowrap;

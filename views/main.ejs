@@ -1,5 +1,5 @@
 <div class="main">
-    <div class="pagination">Yogi > Yogi</div>
+    <div class="pagination"><%= user.username %></div>
     <div class="filters">
         <p>Type</p> 
         <p>View</p>
@@ -7,9 +7,22 @@
     <div class="list">
         <div class="list-header">
             <div class="col-name">Name</div>
-            <div class="col-date">Date Accessed</div>
+            <div class="col-date">Date Created</div>
             <div class="col-type">Type</div>
             <div class="col-size">Size</div>
+        </div>
+        <div class="list-row-container">
+            <% folders.userFolders.forEach(file => { %>
+                <div class="list-row">
+                    <div class="name-and-svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>
+                        <div class="col-name"><%= file.name.slice(0, file.name.lastIndexOf('.')) %></div>
+                    </div>
+                    <div class="col-date"><%= new Date(file.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
+                    <div class="col-type">Folder</div>
+                    <div class="col-size"><%= (file.size / (1024 * 1024)).toFixed(2) %> MB</div>
+                </div>
+            <% }) %>
         </div>
         <div class="list-row-container">
             <% files.userFiles.forEach(file => { %>

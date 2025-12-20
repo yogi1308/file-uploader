@@ -108,7 +108,6 @@ router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary
 router.post('/upload-folder', isAuthenticated, async (req, res) => {
   try {
     const exists = await checkFolderExists(req.user.id, req.body.folderName);
-    console.log(exists)
     if (exists) {
       throw new Error("Folder already exists");
     }
