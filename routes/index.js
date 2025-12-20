@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {uploadToCloudinary, createFolderInCloudinary} = require("../upload/cloudinary");
+const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder} = require("../upload/cloudinary");
 const { user } = require("../lib/prisma");
 
 function isAuthenticated(req, res, next) {
@@ -47,7 +47,8 @@ router.get("/signup", (req, res) => {
 
 router.get("/", isAuthenticated, async (req, res) => {
   const userFiles = await getUserFiles(req.user.id)
-  res.render("index", { user: req.user , files: {userFiles}})
+  const userFolder = await getUserFolders(req.user.id)
+  res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}})
 })
 
 router.post("/signup",
@@ -77,12 +78,13 @@ router.post("/signup",
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
             const newUser = await createUser(req.body.username, hashedPassword);
             if (!newUser) {
-                return res.redirect('/signup');
+              return res.redirect('/signup');
             }
-            req.logIn(newUser, (err) => {
+            req.logIn(newUser, async (err) => {
                 if (err) { 
                     return next(err); 
                 }
+                await createNewUserFolder(req.user.id)
                 return res.redirect("/");
             });
         }

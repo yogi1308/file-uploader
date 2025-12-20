@@ -11,7 +11,7 @@
         <form action="/signup" method="POST" class="signup-form" autocomplete="off">
             <div class="input-div">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" value="<%= locals.userInput ? userInput.username : '' %>" required>
+                <input type="text" id="username" name="username" value="<%= locals.userInput ? userInput.username : '' %>" required minlength="3">
             </div>
             <div class="input-div">
                 <label for="password">Password:</label>

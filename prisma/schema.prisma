@@ -43,6 +43,7 @@ model Files {
   starred      Boolean  @db.Boolean @default(false)
   pinned       Boolean  @db.Boolean @default(false)
   size         Int
+  location     String
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -51,9 +52,10 @@ model Files {
 }
 
 model Folder {
-  id   String @id @default(uuid())
-  path String
-  name String
+  id         String @id @default(uuid())
+  path       String
+  name       String
+  location   String
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
