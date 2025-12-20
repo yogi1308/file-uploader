@@ -25,6 +25,7 @@ const uploadToCloudinary = async (req, res, next) => {
         resource_type: "auto",
         public_id: public_id,
         overwrite: false,
+        folder: req.user.id
         // TODO: FIX ACCESS
       });
       if (result.existing) {

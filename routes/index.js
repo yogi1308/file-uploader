@@ -47,7 +47,7 @@ router.get("/signup", (req, res) => {
 
 router.get("/", isAuthenticated, async (req, res) => {
   const userFiles = await getUserFiles(req.user.id)
-  const userFolder = await getUserFolders(req.user.id)
+  const userFolders = await getUserFolders(req.user.id)
   res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}})
 })
 
