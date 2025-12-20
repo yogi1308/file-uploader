@@ -13,12 +13,12 @@
         <%- include('sidebar', {user: user})%>
         <%- include('main', {user: user, files: files, folders: folders}) %>
         <%- include('upload')%>
-        <%- include('new-folder-dialog', {user: user})%>
+        <%- include('new-folder-dialog', {user: user, folderName: folderName})%>
     </div>
     <% if (locals.error) { %>
         <script>
-            alert("<%= error %>");
             document.querySelector('.new-folder-dialog').showModal();
+            alert("<%= error %>");
         </script>
     <% } %>
 </body>

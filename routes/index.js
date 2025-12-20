@@ -118,7 +118,8 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
   catch (error) {
     if (error.message === "Folder already exists") {
       const userFiles = await getUserFiles(req.user.id);
-      return res.render("index", { user: req.user, files: { userFiles }, error: error.message });
+      const userFolders = await getUserFolders(req.user.id)
+      return res.render("index", { user: req.user, files: { userFiles }, error: error.message, folders: {userFolders}, folderName: req.body.folderName });
     }
     else {
       console.log(error)
