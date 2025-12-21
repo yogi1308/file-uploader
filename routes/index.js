@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB  } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders} = require("../upload/cloudinary");
+const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary} = require("../upload/cloudinary");
 const { user } = require("../lib/prisma");
 
 function isAuthenticated(req, res, next) {
@@ -134,6 +134,23 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
       res.status(500).send("Error uploading files")
     }
   }
+})
+
+router.delete('/asset', isAuthenticated, express.json(), async (req, res) => {
+  try {
+    const owns = await checkUserOwnsAsset(req.body.assetId, req.user.id)
+    if (!owns) {
+      return res.status(403).json({ success: false, message: "Unauthorized" })
+    }
+    await deleteFromCloudinary(req.body.assetId)
+    await deleteFromDB(req.body.assetId)
+  }
+  catch (error) {
+    console.error(error)
+    return res.status(500).json({ success: false, message: "Error deleting asset" })
+  }
+  
+  res.status(200).json({ success: true })
 })
 
 module.exports = router

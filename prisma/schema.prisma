@@ -44,6 +44,7 @@ model Files {
   pinned       Boolean  @db.Boolean @default(false)
   size         Int
   location     String
+  asset_id     String
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
