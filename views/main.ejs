@@ -1,11 +1,11 @@
 <div class="main">
+    <div class="pagination"><%= user.username %> <%= locals.parentFolder && ' ▸ ' + locals.parentFolder.replaceAll('/', ' ▸ ') %> </div>
     <% if (folders.userFolders.length === 0 && files.userFiles.length === 0) { %>
         <div class="nothing-uploaded">
             <h2>Nothing here!</h2>
             <h2>Start uploading!!!</h2>
         </div>
     <% } else { %>
-        <div class="pagination"><%= user.username %></div>
         <div class="filters">
             <p>Type</p> 
             <p>View</p>

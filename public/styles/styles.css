@@ -115,6 +115,7 @@ navbar {
     padding: 10px 0px;
     text-align: center;
     background-color: #1a1a1e;
+    cursor: pointer;
 }
 
 .upload {
