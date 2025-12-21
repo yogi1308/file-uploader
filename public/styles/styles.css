@@ -259,6 +259,15 @@ navbar {
   gap: 5px;
 }
 
+.list-row:hover {
+  background-color: #133d57;
+}
+
+.list-row.clicked {
+  background-color: #1289d3;
+}
+
+
 .file-form {
   display: flex;
   justify-content: space-between;
