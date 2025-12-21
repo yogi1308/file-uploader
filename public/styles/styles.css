@@ -235,6 +235,7 @@ navbar {
     background-color: #1a1a1e;
     transition: background-color 0.2s;
     border-radius: 5px;
+    cursor: pointer;
   }
 
   .list {display:flex; flex-direction: column; height: 100%;}
@@ -365,7 +366,11 @@ dialog::backdrop {
   height: 1rem;
 }
 
+.files-container:empty {
+  display: none;
+}
 
+.files-container {max-height: min-content;}
 
 
 

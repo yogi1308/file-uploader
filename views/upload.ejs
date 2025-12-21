@@ -24,7 +24,6 @@
 
             const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 10MB
             const totalSize = Array.from(fileInput.files).reduce((acc, file) => acc + file.size, 0);
-            console.log(totalSize)
             if (totalSize > MAX_TOTAL_SIZE) {
                 alert("Total size of all files combined cannot exceed 3MB.");
                 fileInput.value = "";

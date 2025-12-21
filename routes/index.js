@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder} = require("../upload/cloudinary");
+const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders} = require("../upload/cloudinary");
 const { user } = require("../lib/prisma");
 
 function isAuthenticated(req, res, next) {
@@ -46,8 +46,9 @@ router.get("/signup", (req, res) => {
 });
 
 router.get("/", isAuthenticated, async (req, res) => {
-  const userFiles = await getUserFiles(req.user.id)
-  const userFolders = await getUserFolders(req.user.id)
+  const userFiles = await getUserFiles(req.user.id, req.query.folder)
+  let userFolders = await getFolders(req.user.id)
+  userFolders = await getUserFolders(userFolders)
   res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}})
 })
 

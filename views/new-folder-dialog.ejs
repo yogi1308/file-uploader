@@ -4,7 +4,7 @@
         <input type="text" name="folderName" id="folderName" maxlength="100" value="<%= locals.folderName ? folderName : '' %>"">
         <div class="file-form">
             <button class="createFolder" type="submit">Create</button>
-            <button class="cancel" type="button" onclick="document.querySelector('dialog.new-folder-dialog').close()">Cancel</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog.new-folder-dialog').close(); window.location.href='/'">Cancel</button>
         </div>
     </form>
 </dialog>

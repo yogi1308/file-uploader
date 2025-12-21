@@ -4,7 +4,7 @@ const path = require('path')
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env. CLOUDINARY_SECRET_KEY
+  api_secret: process.env.CLOUDINARY_SECRET_KEY
 })
 
 const uploadToCloudinary = async (req, res, next) => {
@@ -35,7 +35,7 @@ const uploadToCloudinary = async (req, res, next) => {
         break;
       }
     }
-    uploadURLS.push({name: result.public_id, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes});
+    uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.public_id, size: result.bytes});
   }
   req.uploads = uploadURLS
   next()
@@ -63,4 +63,8 @@ const createNewUserFolder = async (userid) => {
   return await cloudinary.api.create_folder(`${userid}`)
 }
 
-module.exports = { uploadToCloudinary, createCloudinaryFolder, createFolderInCloudinary, createNewUserFolder };
+const getFolders = async (userid, path) => {
+  return await cloudinary.api.sub_folders(`${userid}`)
+}
+
+module.exports = { uploadToCloudinary, createCloudinaryFolder, createFolderInCloudinary, createNewUserFolder, getFolders };

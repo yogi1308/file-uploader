@@ -13,7 +13,7 @@
         <%- include('sidebar', {user: user})%>
         <%- include('main', {user: user, files: files, folders: folders}) %>
         <%- include('upload')%>
-        <%- include('new-folder-dialog', {user: user, folderName: folderName})%>
+        <%- include('new-folder-dialog', {user: user})%>
     </div>
     <% if (locals.error) { %>
         <script>
