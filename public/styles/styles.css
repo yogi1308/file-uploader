@@ -193,6 +193,10 @@ navbar {
     border-radius: 5px;
   }
 
+.pagination > span {
+  cursor: pointer;
+}
+
   .filters {
     display: flex;
     gap: 10px;

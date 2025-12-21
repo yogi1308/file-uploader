@@ -1,5 +1,12 @@
 <div class="main">
-    <div class="pagination"><%= user.username %> <%= locals.parentFolder && ' ▸ ' + locals.parentFolder.replaceAll('/', ' ▸ ') %> </div>
+    <div class="pagination">
+        <!-- <%= user.username %> <%= locals.parentFolder && ' ▸ ' + locals.parentFolder.replaceAll('/', ' ▸ ') %>  -->
+        <span onclick="window.location.href='/'"> <%= user.username %></span>
+        <% let folderquery = ''; locals.parentFolder && locals.parentFolder.split('/').forEach(folder => { %>
+            <% folderquery += (folderquery ? '/' : '') + folder %>
+            <span onclick="window.location.href='/?folder=<%= encodeURIComponent(folderquery) %>'"> ▸ <%= folder %></span>
+        <% }) %>
+    </div>
     <% if (folders.userFolders.length === 0 && files.userFiles.length === 0) { %>
         <div class="nothing-uploaded">
             <h2>Nothing here!</h2>
