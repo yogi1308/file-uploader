@@ -372,6 +372,17 @@ dialog::backdrop {
 
 .files-container {max-height: min-content;}
 
+.nothing-uploaded {
+    height: 100%;
+    justify-items: center;
+    align-content: center;
+    background: #1a1a1e;
+    border-radius: 5px;
+    border: 1px dashed;
+}
+
+h2, h3 {margin: 0;}
+
 
 
 
