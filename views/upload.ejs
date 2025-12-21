@@ -4,7 +4,7 @@
         <div id="file-list"></div>
         <div class="file-form">
             <button type="submit">Upload</button>
-            <button class="cancel" type="button" onclick="document.querySelector('dialog').close(); window.location.href='/<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>'">Cancel</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog').close()">Cancel</button>
         </div>
     </form>
     <script>
