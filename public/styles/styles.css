@@ -270,20 +270,6 @@ navbar {
   }
 
   .list {display:flex; flex-direction: column; height: 100%;}
-  
-  .folder-and-files-container {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.list-row-container {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
 
 .list-row:hover, button:hover {
   background-color: #133d57;
@@ -380,7 +366,7 @@ dialog::backdrop {
     right: -5%;
     width: min-content;
     height: min-content;
-    padding: 3px;
+    padding: 3px 5px;
     background-color: #1a1a1e;
     border: 1px solid #6c6c74;
     border-radius: 5px;
@@ -415,6 +401,7 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   gap: 5px;
+  overflow-x: hidden;
 }
 
 .name-and-svg > svg {
