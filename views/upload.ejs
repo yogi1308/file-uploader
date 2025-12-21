@@ -1,10 +1,10 @@
 <dialog>
-    <form action="/upload" method="post" class="upload-form" enctype="multipart/form-data">
+    <form action="/upload<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>" method="post" class="upload-form" enctype="multipart/form-data">
         <input type="file" name="file" id="file" multiple>
         <div id="file-list"></div>
         <div class="file-form">
             <button type="submit">Upload</button>
-            <button class="cancel" type="button" onclick="document.querySelector('dialog').close()">Cancel</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog').close(); window.location.href='/<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>'">Cancel</button>
         </div>
     </form>
     <script>

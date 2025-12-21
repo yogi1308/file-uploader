@@ -46,7 +46,8 @@ router.get("/signup", (req, res) => {
 });
 
 router.get("/", isAuthenticated, async (req, res) => {
-  const userFiles = await getUserFiles(req.user.id, req.query.folder)
+  let userFiles;
+  req.query.folder === undefined ? userFiles = await getUserFiles(req.user.id) : userFiles = await getUserFiles(`${req.user.id}/${req.query.folder}`)
   let userFolders;
   req.query.folder === undefined ? userFolders = await getFolders(req.user.id) : userFolders = await getFolders(`${req.user.id}/${req.query.folder}`) 
   userFolders = await getUserFolders(userFolders)
@@ -99,7 +100,8 @@ router.post("/signup",
 router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
   try {
     await postUploadDbUpdate(req.user.id, req.uploads)
-    res.redirect("/")
+    const redirectUrl = req.query.folder ? `/?folder=${encodeURIComponent(req.query.folder)}` : "/";
+    res.redirect(redirectUrl)
   }
   catch (error) {
     console.log(error)

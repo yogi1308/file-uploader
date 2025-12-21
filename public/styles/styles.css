@@ -246,6 +246,7 @@ navbar {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
 .list-row-container {
