@@ -38,7 +38,7 @@ const uploadToCloudinary = async (req, res, next) => {
         break;
       }
     }
-    uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id});
+    uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id});
   }
   req.uploads = uploadURLS
   next()
@@ -68,6 +68,10 @@ async function deleteFromCloudinary(assetId) {
     console.error("Error deleting from Cloudinary:", error);
     throw error;
   }
+}
+
+async function renameCloudinaryFile(newFile) {
+
 }
 
 module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary };

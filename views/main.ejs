@@ -24,7 +24,7 @@
                 </p>
             </div>
             <div class="options">
-                <button>
+                <button onclick="renameButtonClicked(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
                     Rename
                 </button>
@@ -78,46 +78,23 @@
         </div>
     <% } %>
     <script>
-        let type = ''
         const path = '<%= locals.user.id %>/<%= locals.parentFolder || "" %>'
         let selectedElement = ''
         selectedAssestId = ''
-        const imageFormats = [
-            'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'svg', 'webp',
-            'avif', 'heif', 'heic', 'jxl', 'pdf', 'ai', 'psd', 'eps',
-            'fbx', 'obj', 'glb', 'gltf', 'usdz', '3ds', 'ply',
-            'arw', 'cr2', 'cr3', 'dng', 'ico', 'tga', 'djvu', 'flif',
-            'jp2', 'jxr', 'wdp', 'hdp'
-        ];
-        
-        const videoFormats = [
-            'mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv', 'flv',
-            'm3u8', 'mpd', 'ts', 'm2ts', 'mts', '3gp', '3g2',
-            'ogv', 'mpeg', 'mxf', 'mp3', 'wav', 'flac', 'aac'
-        ];
 
         function listRowClicked(e) {
             document.querySelector('.clicked')?.classList.remove('clicked')
             e.target.closest('.list-row').classList.add('clicked')
             document.querySelector('.options')?.classList.add('active')
             selectedElement = e.target.closest('.list-row')
-            type = e.target.closest('.list-row').querySelector('.col-type').textContent
-            console.log(type)
-            if (type !== 'Folder') {
-                if (imageFormats.includes(type)) {type = 'image'}
-                else if (videoFormats.includes(type)) {type = 'video'}
-                else {type = 'raw'}
-            }
             selectedAssestId = e.target.closest('.list-row').dataset.id
             console.log(selectedAssestId)
-            console.log(type)
         }
 
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.list-row') && !e.target.closest('.options')) {
                 document.querySelector('.clicked')?.classList.remove('clicked')
                 document.querySelector('.options')?.classList.remove('active')
-                type = ''
                 selectedAssestId = ''
                 selectedElement = ''
             }
@@ -130,12 +107,40 @@
                 await fetch('/asset', {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({assetId: selectedAssestId, assetType: type})
+                    body: JSON.stringify({assetId: selectedAssestId})
                 })
             }
             catch {
                 alert('An error occurred while deleting the item.');
             }
+        }
+
+        async function renameButtonClicked(event) {
+            document.querySelector('.options')?.classList.remove('active')
+            document.querySelectorAll('.clicked').forEach(el => {el.classList.remove('clicked')})
+            const oldName = selectedElement.querySelector('.col-name').textContent
+            const inputElem = document.createElement('input')
+            inputElem.classList.add('new-name')
+            inputElem.value = oldName
+            selectedElement.querySelector('.col-name').replaceWith(inputElem)
+            inputElem.focus()
+            inputElem.addEventListener('keydown', (e) => {e.key === 'Enter' && inputElem.blur()})
+            inputElem.addEventListener('blur', () => {
+                const newNameElem = document.createElement('div')
+                newNameElem.classList.add('col-name')
+                inputElem.value === "" ? newNameElem.textContent = oldName : newNameElem.textContent = inputElem.value
+                inputElem.replaceWith(newNameElem)
+            })
+            // try {
+            //     await fetch('/asset', {
+            //         method: 'UPDATE',
+            //         headers: { 'Content-Type': 'application/json' },
+            //         body: JSON.stringify({assetId: selectedAssestId})
+            //     })
+            // }
+            // catch {
+            //     alert('An error occurred while deleting the item.');
+            // }
         }
     </script>
 </div>
