@@ -44,19 +44,8 @@ const uploadToCloudinary = async (req, res, next) => {
   }
 }
 
-const createCloudinaryFolder = async (req, res, next) => {
-  try {
-    const result = await cloudinary.api.create_folder(req.body.folderName);
-    req.folder = result;
-    next();
-  }
-  catch (error) {
-    next(error)
-  }
-}
-
 const createFolderInCloudinary = async (userid, folderName, folderPath = "") => {
-  return folderPath !== "" ? await cloudinary.api.create_folder(`${userid}/${folderName}`) : await cloudinary.api.create_folder(`${userid}/${folderName}`);
+  return folderPath === "" ? await cloudinary.api.create_folder(`${userid}/${folderName}`) : await cloudinary.api.create_folder(`${userid}/${folderPath}/${folderName}`);
 }
 
 const createNewUserFolder = async (userid) => {
@@ -67,4 +56,4 @@ const getFolders = async (userid, path) => {
   return await cloudinary.api.sub_folders(`${userid}`)
 }
 
-module.exports = { uploadToCloudinary, createCloudinaryFolder, createFolderInCloudinary, createNewUserFolder, getFolders };
+module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders };

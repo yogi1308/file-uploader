@@ -11,9 +11,9 @@
     <div class="index">
         <%- include('navbar') %>
         <%- include('sidebar', {user: user})%>
-        <%- include('main', {user: user, files: files, folders: folders}) %>
+        <%- include('main', {user: user, files: files, folders: folders, parentFolder: parentFolder}) %>
         <%- include('upload')%>
-        <%- include('new-folder-dialog', {user: user})%>
+        <%- include('new-folder-dialog', {user: user, parentFolder: parentFolder}) %>
     </div>
     <% if (locals.error) { %>
         <script>

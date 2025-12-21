@@ -55,7 +55,6 @@ model Folder {
   id         String @id @default(uuid())
   path       String
   name       String
-  location   String
   date       DateTime
   size       Int
 

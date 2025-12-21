@@ -1,10 +1,10 @@
 <dialog class="new-folder-dialog" style="width: 40vw;">
-    <form action="/upload-folder" method="post" class="upload-form">
+    <form action="/upload-folder<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>" method="post" class="upload-form">
         <label for="folderName">Folder Name</label>
         <input type="text" name="folderName" id="folderName" maxlength="100" value="<%= locals.folderName ? folderName : '' %>"">
         <div class="file-form">
             <button class="createFolder" type="submit">Create</button>
-            <button class="cancel" type="button" onclick="document.querySelector('dialog.new-folder-dialog').close(); window.location.href='/'">Cancel</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog.new-folder-dialog').close(); window.location.href='/<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>'">Cancel</button>
         </div>
     </form>
 </dialog>

@@ -240,12 +240,17 @@ navbar {
 
   .list {display:flex; flex-direction: column; height: 100%;}
   
-  .list-row-container {
+  .folder-and-files-container {
     flex: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+}
+
+.list-row-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .file-form {

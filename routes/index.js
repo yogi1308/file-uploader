@@ -47,9 +47,10 @@ router.get("/signup", (req, res) => {
 
 router.get("/", isAuthenticated, async (req, res) => {
   const userFiles = await getUserFiles(req.user.id, req.query.folder)
-  let userFolders = await getFolders(req.user.id)
+  let userFolders;
+  req.query.folder === undefined ? userFolders = await getFolders(req.user.id) : userFolders = await getFolders(`${req.user.id}/${req.query.folder}`) 
   userFolders = await getUserFolders(userFolders)
-  res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}})
+  res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: req.query.folder})
 })
 
 router.post("/signup",
@@ -112,16 +113,19 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
     if (exists) {
       throw new Error("Folder already exists");
     }
-    const cloudFolder = await createFolderInCloudinary(req.user.id, req.body.folderName);
+    const cloudFolder = await createFolderInCloudinary(req.user.id, req.body.folderName, req.query.folder);
     await createFolder(req.user.id, cloudFolder)
-    res.redirect("/")
+    const redirectUrl = req.query.folder ? `/?folder=${encodeURIComponent(req.query.folder)}` : "/";
+    res.redirect(redirectUrl)
   }
   catch (error) {
     if (error.message === "Folder already exists") {
-      const userFiles = await getUserFiles(req.user.id);
-      let userFolders = await getFolders(req.user.id)
+      const parent = req.query.folder;
+      const userFiles = await getUserFiles(req.user.id, parent);
+      let userFolders;
+      parent === undefined ? userFolders = await getFolders(req.user.id) : userFolders = await getFolders(`${req.user.id}/${parent}`)
       userFolders = await getUserFolders(userFolders)
-      return res.render("index", { user: req.user, files: { userFiles }, error: error.message, folders: {userFolders}, folderName: req.body.folderName });
+      return res.render("index", { user: req.user, files: { userFiles }, error: error.message, folders: {userFolders}, folderName: req.body.folderName, parentFolder: parent });
     }
     else {
       console.log(error)
