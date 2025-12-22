@@ -24,6 +24,14 @@
                 </p>
             </div>
             <div class="options">
+                <button class="star" onclick="toggleStar(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>
+                    <span>Star</span>
+                </button>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+                    Pin
+                </button>
                 <button onclick="renameButtonClicked(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
                     Rename
@@ -50,7 +58,7 @@
                 <div class="col-size">Size</div>
             </div>
             <% folders.userFolders.forEach(file => { %>
-                <div class="list-row" onclick="listRowClicked(event)" ondblclick="window.location.href='/?folder=<%= encodeURIComponent((locals.parentFolder ? locals.parentFolder + '/' : '') + file.name) %>'" >
+                <div class="list-row" onclick="listRowClicked(event)" data-data="<%= JSON.stringify(file) %>" ondblclick="window.location.href='/?folder=<%= encodeURIComponent((locals.parentFolder ? locals.parentFolder + '/' : '') + file.name) %>'" >
                     <div class="name-and-svg">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>
                         <div class="col-name"><%= file.name.slice(file.name.lastIndexOf('.') +1) %></div>
@@ -61,7 +69,7 @@
                 </div>
                 <% }) %>
             <% files.userFiles.forEach(file => { %>
-                <div class="list-row" data-id="<%= file.asset_id %>" data-public_id="<%= file.public_id %>" onclick="listRowClicked(event)">
+                <div class="list-row" data-id="<%= file.asset_id %>" data-public_id="<%= file.public_id %>" data-data="<%= JSON.stringify(file) %>" onclick="listRowClicked(event)">
                     <div class="name-and-svg">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M304 112L192 112C183.2 112 176 119.2 176 128L176 512C176 520.8 183.2 528 192 528L448 528C456.8 528 464 520.8 464 512L464 272L376 272C336.2 272 304 239.8 304 200L304 112zM444.1 224L352 131.9L352 200C352 213.3 362.7 224 376 224L444.1 224zM128 128C128 92.7 156.7 64 192 64L325.5 64C342.5 64 358.8 70.7 370.8 82.7L493.3 205.3C505.3 217.3 512 233.6 512 250.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128z"/></svg>
                         <div class="col-name"><%= file.name.slice(0, file.name.lastIndexOf('.')) %></div>
@@ -109,6 +117,15 @@
             selectedAssestId = e.target.closest('.list-row').dataset.id
             selectedPublicId = e.target.closest('.list-row').dataset.public_id
             console.log(selectedPublicId)
+            const fileData = selectedElement.dataset.data ? JSON.parse(selectedElement.dataset.data) : {}
+            if (fileData.starred === true) {
+                document.querySelector('.star').querySelector('svg').classList.add('gold'); 
+                document.querySelector('.star span').textContent = 'Unstar' 
+            }
+            else {
+                document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
+                document.querySelector('.star span').textContent = 'Star' 
+            }
         }
 
         document.addEventListener('click', (e) => {
@@ -117,11 +134,15 @@
                 document.querySelector('.options')?.classList.remove('active')
                 selectedAssestId = ''
                 selectedElement = ''
+                document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
+                document.querySelector('.star span').textContent = 'Star' 
             }
         })
 
         async function deleteButtonClickde(event) {
             document.querySelector('.options')?.classList.remove('active')
+            document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
+            document.querySelector('.star span').textContent = 'Star' 
             selectedElement.remove(selectedElement)
             try {
                 await fetch('/asset', {
@@ -136,6 +157,8 @@
         }
 
         async function renameButtonClicked(event) {
+            document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
+            document.querySelector('.star span').textContent = 'Star' 
             document.querySelector('.options')?.classList.remove('active')
             document.querySelectorAll('.clicked').forEach(el => {el.classList.remove('clicked')})
             const oldName = selectedElement.querySelector('.col-name').textContent
@@ -166,6 +189,32 @@
                     alert('An error occurred while deleting the item.');
                 }
             })
+        }
+
+        async function toggleStar(event) {
+            if (!selectedElement || !selectedElement.dataset.data) return
+            const fileData = JSON.parse(selectedElement.dataset.data)
+            fileData.starred = !fileData.starred
+            selectedElement.dataset.data = JSON.stringify(fileData)
+
+            if (fileData.starred) {
+                document.querySelector('.star svg').classList.add('gold')
+                document.querySelector('.star span').textContent = 'Unstar'
+            } else {
+                document.querySelector('.star svg').classList.remove('gold')
+                document.querySelector('.star span').textContent = 'Star'
+            }
+
+            try {
+                await fetch('/toggle', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({toggle: 'starred', itemid: fileData.id})
+                })
+            }
+            catch {
+                alert('An error occurred while updating the item.');
+            }
         }
     </script>
 </div>

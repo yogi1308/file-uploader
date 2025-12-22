@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, checkUserOwnsAssetUsingId, toggleStar } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -165,6 +165,18 @@ router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
   catch (error) {
     console.error(error)
     return res.status(500).json({ success: false, message: "Error deleting asset" })
+  }
+  
+  res.status(200).json({ success: true })
+})
+
+router.patch('/toggle', isAuthenticated, express.json(), async (req, res) => {
+  try {
+    if (req.body.toggle === "starred") await toggleStar(req.body.itemid)
+  }
+  catch (error) {
+    console.error(error)
+    return res.status(500).json({ success: false, message: "Error updating asset" })
   }
   
   res.status(200).json({ success: true })

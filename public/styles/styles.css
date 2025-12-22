@@ -413,6 +413,7 @@ dialog::backdrop {
 
 .new-name {width: 100%;}
 
+
 .files-container:empty {
   display: none;
 }
@@ -430,6 +431,7 @@ dialog::backdrop {
 
 h2, h3 {margin: 0;}
 
+.options svg.gold {fill: gold;}
 
 
 
