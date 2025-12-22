@@ -155,6 +155,8 @@ navbar {
     flex-direction: column;
     gap: 5px;
     width: calc(100% - 20px);
+    border-bottom: 1px solid ;
+    padding-bottom: 5px;
 }
 
 .categories > div {
@@ -172,6 +174,14 @@ navbar {
     background-color: #1a1a1e;
     height: calc(100% - 10px);
     align-content: center;
+}
+
+.categories > div > *:hover {
+
+}
+
+button.pin {
+  display: none;
 }
 
 .categories > div > p {
@@ -434,6 +444,31 @@ h2, h3 {margin: 0;}
 .options svg.gold {fill: gold;}
 .options svg.pinned {fill: #1289d3;}
 
+.sidebar .pinned {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: calc(100% - 20px);
+  padding: 10px 0px;
+  border-bottom: 1px solid;
+}
+
+.pinned-folder {
+  display: flex;
+  width: calc(100% - 10px);
+  align-items: center;
+  padding: 0px 5px;
+  gap: 5px;
+}
+
+.pinned-folder p {
+    flex: 1;
+    text-align: center;
+}
+
+.pinned-folder svg {
+  padding-right: 5px ;
+}
 
 
 

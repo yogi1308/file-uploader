@@ -41,7 +41,6 @@ model Files {
   date         DateTime  
   type         String
   starred      Boolean  @db.Boolean @default(false)
-  pinned       Boolean  @db.Boolean @default(false)
   size         Int
   location     String
   asset_id     String
@@ -49,6 +48,9 @@ model Files {
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  folderId     String?
+  folder       Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
   @@map("files")
 }
@@ -61,9 +63,12 @@ model Folder {
   size       Int
   starred    Boolean  @default(false) @db.Boolean
   pinned     Boolean  @default(false) @db.Boolean
+  type       String   @default("folder")
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  files        Files[]
 
   @@map("folder")
 }

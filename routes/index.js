@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar, getPinned } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -51,7 +51,8 @@ router.get("/", isAuthenticated, async (req, res) => {
   let userFolders;
   req.query.folder === undefined ? userFolders = await getFolders(req.user.id) : userFolders = await getFolders(`${req.user.id}/${req.query.folder}`) 
   userFolders = await getUserFolders(userFolders)
-  res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: req.query.folder})
+  const pinned = await getPinned(req.user.id)
+  res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: req.query.folder, pinned: pinned})
 })
 
 router.post("/signup",

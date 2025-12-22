@@ -10,7 +10,7 @@
 <body>
     <div class="index">
         <%- include('navbar') %>
-        <%- include('sidebar', {user: user})%>
+        <%- include('sidebar', {user: user, pinned: pinned})%>
         <%- include('main', {user: user, files: files, folders: folders, parentFolder: parentFolder}) %>
         <%- include('upload')%>
         <%- include('new-folder-dialog', {user: user, parentFolder: parentFolder}) %>

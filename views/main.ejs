@@ -24,13 +24,13 @@
                 </p>
             </div>
             <div class="options">
-                <button class="star" onclick="toggleStar(event)">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>
-                    <span>Star</span>
-                </button>
                 <button class="pin" onclick="togglePin(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
                     <span>Pin</span>
+                </button>
+                <button class="star" onclick="toggleStar(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>
+                    <span>Star</span>
                 </button>
                 <button onclick="renameButtonClicked(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
@@ -127,13 +127,18 @@
                 document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
                 document.querySelector('.star span').textContent = 'Star' 
             }
-            if (fileData.pinned === true) {
+            if (fileData?.pinned === true) {
                 document.querySelector('.pin').querySelector('svg').classList.add('pinned'); 
                 document.querySelector('.pin span').textContent = 'Unpin' 
+                document.querySelector('.pin').style.display = 'flex'
+            }
+            else if (fileData?.pinned === false) {
+                document.querySelector('.pin').querySelector('svg').classList?.remove('pinned'); 
+                document.querySelector('.pin span').textContent = 'Pin'
+                document.querySelector('.pin').style.display = 'flex' 
             }
             else {
-                document.querySelector('.pin').querySelector('svg').classList?.remove('pinned'); 
-                document.querySelector('.pin span').textContent = 'Pin' 
+                document.querySelector('.pin').style.display = 'none'
             }
         }
 
@@ -148,6 +153,7 @@
                 document.querySelector('.star span').textContent = 'Star' 
                 document.querySelector('.pin svg').classList.remove('pinned')
                 document.querySelector('.pin span').textContent = 'Pin'
+                document.querySelector('.pin').style.display = 'none'
             }
         })
 
@@ -157,6 +163,7 @@
             document.querySelector('.star span').textContent = 'Star' 
             document.querySelector('.pin svg').classList.remove('pinned')
             document.querySelector('.pin span').textContent = 'Pin'
+            document.querySelector('.pin').style.display = 'none'
             selectedElement.remove(selectedElement)
             try {
                 await fetch('/asset', {
@@ -175,6 +182,7 @@
             document.querySelector('.star span').textContent = 'Star' 
             document.querySelector('.pin svg').classList.remove('pinned')
             document.querySelector('.pin span').textContent = 'Pin'
+            document.querySelector('.pin').style.display = 'none'
             document.querySelector('.options')?.classList.remove('active')
             document.querySelectorAll('.clicked').forEach(el => {el.classList.remove('clicked')})
             const oldName = selectedElement.querySelector('.col-name').textContent
