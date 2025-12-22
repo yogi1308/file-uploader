@@ -249,9 +249,24 @@
             if (fileData.pinned) {
                 document.querySelector('.pin svg').classList.add('pinned')
                 document.querySelector('.pin span').textContent = 'Unpin'
+                newPin = document.createElement('div')
+                newPin.classList.add('pinned-folder')
+                pinnedContainer = document.querySelector('.pinned')
+                pinnedContainer.appendChild(newPin)
+                newPin.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+                    <p> ${fileData.name} </p>
+                `
             } else {
                 document.querySelector('.pin svg').classList.remove('pinned')
                 document.querySelector('.pin span').textContent = 'Pin'
+                pinnedFolders = document.querySelectorAll('.pinned-folder')
+                pinnedContainer = document.querySelector('.pinned')
+                pinnedFolders.forEach(folder => {
+                    if (folder.querySelector('p').textContent.trim() === fileData.name) {
+                        pinnedContainer.removeChild(folder)
+                    }
+                })
             }
 
             try {

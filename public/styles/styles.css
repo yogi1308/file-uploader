@@ -401,7 +401,7 @@ dialog::backdrop {
     border-radius: 3px;
 }
 
-.col-name, .col-date, .col-type, .col-size {
+.col-name, .col-date, .col-type, .col-size,.pinned-folder p {
     overflow-x: hidden;
     text-overflow: ellipsis;
     text-wrap-mode: nowrap;
