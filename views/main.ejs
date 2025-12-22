@@ -61,7 +61,7 @@
                 </div>
                 <% }) %>
             <% files.userFiles.forEach(file => { %>
-                <div class="list-row" data-id="<%= file.asset_id %>" onclick="listRowClicked(event)">
+                <div class="list-row" data-id="<%= file.asset_id %>" data-public_id="<%= file.public_id %>" onclick="listRowClicked(event)">
                     <div class="name-and-svg">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M304 112L192 112C183.2 112 176 119.2 176 128L176 512C176 520.8 183.2 528 192 528L448 528C456.8 528 464 520.8 464 512L464 272L376 272C336.2 272 304 239.8 304 200L304 112zM444.1 224L352 131.9L352 200C352 213.3 362.7 224 376 224L444.1 224zM128 128C128 92.7 156.7 64 192 64L325.5 64C342.5 64 358.8 70.7 370.8 82.7L493.3 205.3C505.3 217.3 512 233.6 512 250.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128z"/></svg>
                         <div class="col-name"><%= file.name.slice(0, file.name.lastIndexOf('.')) %></div>
@@ -76,7 +76,30 @@
     <script>
         const path = '<%= locals.user.id %>/<%= locals.parentFolder || "" %>'
         let selectedElement = ''
-        selectedAssestId = ''
+        let selectedAssestId = ''
+        let selectedPublicId = ''
+
+        const imageFormats = [
+            'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'svg', 'webp',
+            'avif', 'heif', 'heic', 'jxl', 'pdf', 'ai', 'psd', 'eps',
+            'fbx', 'obj', 'glb', 'gltf', 'usdz', '3ds', 'ply',
+            'arw', 'cr2', 'cr3', 'dng', 'ico', 'tga', 'djvu', 'flif',
+            'jp2', 'jxr', 'wdp', 'hdp'
+        ];
+        
+        const videoFormats = [
+            'mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv', 'flv',
+            'm3u8', 'mpd', 'ts', 'm2ts', 'mts', '3gp', '3g2',
+            'ogv', 'mpeg', 'mxf', 'mp3', 'wav', 'flac', 'aac'
+        ];
+
+        function getResourceType(type) {
+            if (!type) return 'raw';
+            const ext = type.toLowerCase();
+            if (imageFormats.includes(ext)) return 'image';
+            if (videoFormats.includes(ext)) return 'video';
+            return 'raw';
+        }
 
         function listRowClicked(e) {
             document.querySelector('.clicked')?.classList.remove('clicked')
@@ -84,7 +107,8 @@
             document.querySelector('.options')?.classList.add('active')
             selectedElement = e.target.closest('.list-row')
             selectedAssestId = e.target.closest('.list-row').dataset.id
-            console.log(selectedAssestId)
+            selectedPublicId = e.target.closest('.list-row').dataset.public_id
+            console.log(selectedPublicId)
         }
 
         document.addEventListener('click', (e) => {
@@ -116,27 +140,32 @@
             document.querySelectorAll('.clicked').forEach(el => {el.classList.remove('clicked')})
             const oldName = selectedElement.querySelector('.col-name').textContent
             const inputElem = document.createElement('input')
+            const type = selectedElement.querySelector('.col-type').textContent.trim()
+            const resourceType = getResourceType(type)
+            console.log(resourceType, "32423")
             inputElem.classList.add('new-name')
             inputElem.value = oldName
             selectedElement.querySelector('.col-name').replaceWith(inputElem)
-            inputElem.focus()
+            inputElem.select()
             inputElem.addEventListener('keydown', (e) => {e.key === 'Enter' && inputElem.blur()})
-            inputElem.addEventListener('blur', () => {
+            inputElem.addEventListener('blur', async () => {
                 const newNameElem = document.createElement('div')
                 newNameElem.classList.add('col-name')
                 inputElem.value === "" ? newNameElem.textContent = oldName : newNameElem.textContent = inputElem.value
                 inputElem.replaceWith(newNameElem)
+
+
+                try {
+                    await fetch('/asset', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({publicId: selectedPublicId, new_display_name: newNameElem.textContent, resourceType: resourceType})
+                    })
+                }
+                catch {
+                    alert('An error occurred while deleting the item.');
+                }
             })
-            // try {
-            //     await fetch('/asset', {
-            //         method: 'UPDATE',
-            //         headers: { 'Content-Type': 'application/json' },
-            //         body: JSON.stringify({assetId: selectedAssestId})
-            //     })
-            // }
-            // catch {
-            //     alert('An error occurred while deleting the item.');
-            // }
         }
     </script>
 </div>

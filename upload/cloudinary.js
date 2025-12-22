@@ -26,7 +26,7 @@ const uploadToCloudinary = async (req, res, next) => {
       result = await cloudinary.uploader.upload(dataURI, {
         resource_type: "auto",
         public_id: public_id,
-        overwrite: false,
+        overwrite: true,
         folder: req.user.id,
         asset_folder: assetFolder
         // TODO: FIX ACCESS
@@ -70,8 +70,21 @@ async function deleteFromCloudinary(assetId) {
   }
 }
 
-async function renameCloudinaryFile(newFile) {
-
+async function renameCloudinaryFile(publicId, newName, resourceType) {
+  console.log(publicId, resourceType)
+  try {
+    const res = await cloudinary.api.update(publicId, {display_name: newName, resource_type: resourceType})
+    console.log(res?.error)
+  }
+  catch (error) {
+    if (error.error && error.error.http_code === 404 && resourceType === 'image') {
+      return await cloudinary.api.update(publicId, {display_name: newName, resource_type: 'raw'})
+    }
+    console.error("Error renaming in Cloudinary:", error);
+    throw error;
+  }
 }
 
-module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary };
+
+
+module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary, renameCloudinaryFile };

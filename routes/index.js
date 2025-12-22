@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB  } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary} = require("../upload/cloudinary");
+const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary, renameCloudinaryFile} = require("../upload/cloudinary");
 const { user } = require("../lib/prisma");
 
 function isAuthenticated(req, res, next) {
@@ -144,6 +144,23 @@ router.delete('/asset', isAuthenticated, express.json(), async (req, res) => {
     }
     await deleteFromCloudinary(req.body.assetId)
     await deleteFromDB(req.body.assetId)
+  }
+  catch (error) {
+    console.error(error)
+    return res.status(500).json({ success: false, message: "Error deleting asset" })
+  }
+  
+  res.status(200).json({ success: true })
+})
+
+router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
+  try {
+    const owns = await checkUserOwnsAssetUsingPublicId(req.body.publicId, req.user.id)
+    if (!owns) {
+      return res.status(403).json({ success: false, message: "Unauthorized" })
+    }
+    await renameCloudinaryFile(req.body.publicId, req.body.new_display_name, req.body.resourceType)
+    await renameFromDB(req.body.publicId, req.body.new_display_name)
   }
   catch (error) {
     console.error(error)
