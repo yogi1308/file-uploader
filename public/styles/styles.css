@@ -176,7 +176,7 @@ navbar {
     align-content: center;
 }
 
-.categories > div:hover  > * {
+.categories > div:hover  > *, .active > svg, .active > p {
   transition: all 0.3s ease-in;
   background-color: #1289d3;
 }
