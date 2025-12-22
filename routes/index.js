@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar, getPinned } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar, getPinned, getStarred } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -182,6 +182,17 @@ router.patch('/toggle', isAuthenticated, express.json(), async (req, res) => {
   }
   
   res.status(200).json({ success: true })
+})
+
+router.get('/starred', isAuthenticated, async (req, res) => {
+  try {
+    const [userFiles, userFolders] = await getStarred(req.user.id)
+    const pinned = await getPinned(req.user.id)
+    res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: 'starred', pinned: pinned})
+  }
+  catch (error) {
+    console.error(error)
+  }
 })
 
 module.exports = router

@@ -176,8 +176,9 @@ navbar {
     align-content: center;
 }
 
-.categories > div > *:hover {
-
+.categories > div:hover  > * {
+  transition: all 0.3s ease-in;
+  background-color: #1289d3;
 }
 
 button.pin {
