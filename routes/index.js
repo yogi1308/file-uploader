@@ -172,8 +172,8 @@ router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
 
 router.patch('/toggle', isAuthenticated, express.json(), async (req, res) => {
   try {
-    if (req.body.toggle === "starred") await toggleStar(req.body.itemid)
-    else if (req.body.toggle === "pinned") {await togglePin(req.body.itemid)}
+    if (req.body.toggle === "starred") await toggleStar(req.body.itemid, req.body.itemType)
+    else if (req.body.toggle === "pinned") {await togglePin(req.body.itemid, req.body.itemType)}
   }
   catch (error) {
     console.error(error)
