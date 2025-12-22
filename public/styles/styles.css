@@ -432,6 +432,7 @@ dialog::backdrop {
 h2, h3 {margin: 0;}
 
 .options svg.gold {fill: gold;}
+.options svg.pinned {fill: #1289d3;}
 
 
 

@@ -60,7 +60,6 @@ const getFolders = async (userid, path) => {
 }
 
 async function deleteFromCloudinary(assetId) {
-  console.log(assetId)
   try {
     await cloudinary.api.delete_resources_by_asset_ids([assetId])
   }
@@ -71,10 +70,8 @@ async function deleteFromCloudinary(assetId) {
 }
 
 async function renameCloudinaryFile(publicId, newName, resourceType) {
-  console.log(publicId, resourceType)
   try {
     const res = await cloudinary.api.update(publicId, {display_name: newName, resource_type: resourceType})
-    console.log(res?.error)
   }
   catch (error) {
     if (error.error && error.error.http_code === 404 && resourceType === 'image') {

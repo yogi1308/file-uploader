@@ -28,9 +28,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>
                     <span>Star</span>
                 </button>
-                <button>
+                <button class="pin" onclick="togglePin(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
-                    Pin
+                    <span>Pin</span>
                 </button>
                 <button onclick="renameButtonClicked(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
@@ -116,7 +116,6 @@
             selectedElement = e.target.closest('.list-row')
             selectedAssestId = e.target.closest('.list-row').dataset.id
             selectedPublicId = e.target.closest('.list-row').dataset.public_id
-            console.log(selectedPublicId)
             const fileData = selectedElement.dataset.data ? JSON.parse(selectedElement.dataset.data) : {}
             if (fileData.starred === true) {
                 document.querySelector('.star').querySelector('svg').classList.add('gold'); 
@@ -125,6 +124,14 @@
             else {
                 document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
                 document.querySelector('.star span').textContent = 'Star' 
+            }
+            if (fileData.pinned === true) {
+                document.querySelector('.pin').querySelector('svg').classList.add('pinned'); 
+                document.querySelector('.pin span').textContent = 'Unpin' 
+            }
+            else {
+                document.querySelector('.pin').querySelector('svg').classList?.remove('pinned'); 
+                document.querySelector('.pin span').textContent = 'Pin' 
             }
         }
 
@@ -136,6 +143,8 @@
                 selectedElement = ''
                 document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
                 document.querySelector('.star span').textContent = 'Star' 
+                document.querySelector('.pin svg').classList.remove('pinned')
+                document.querySelector('.pin span').textContent = 'Pin'
             }
         })
 
@@ -143,6 +152,8 @@
             document.querySelector('.options')?.classList.remove('active')
             document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
             document.querySelector('.star span').textContent = 'Star' 
+            document.querySelector('.pin svg').classList.remove('pinned')
+            document.querySelector('.pin span').textContent = 'Pin'
             selectedElement.remove(selectedElement)
             try {
                 await fetch('/asset', {
@@ -159,13 +170,14 @@
         async function renameButtonClicked(event) {
             document.querySelector('.star').querySelector('svg').classList?.remove('gold'); 
             document.querySelector('.star span').textContent = 'Star' 
+            document.querySelector('.pin svg').classList.remove('pinned')
+            document.querySelector('.pin span').textContent = 'Pin'
             document.querySelector('.options')?.classList.remove('active')
             document.querySelectorAll('.clicked').forEach(el => {el.classList.remove('clicked')})
             const oldName = selectedElement.querySelector('.col-name').textContent
             const inputElem = document.createElement('input')
             const type = selectedElement.querySelector('.col-type').textContent.trim()
             const resourceType = getResourceType(type)
-            console.log(resourceType, "32423")
             inputElem.classList.add('new-name')
             inputElem.value = oldName
             selectedElement.querySelector('.col-name').replaceWith(inputElem)
@@ -210,6 +222,32 @@
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({toggle: 'starred', itemid: fileData.id})
+                })
+            }
+            catch {
+                alert('An error occurred while updating the item.');
+            }
+        }
+
+        async function togglePin(event) {
+            if (!selectedElement || !selectedElement.dataset.data) return
+            const fileData = JSON.parse(selectedElement.dataset.data)
+            fileData.pinned = !fileData.pinned
+            selectedElement.dataset.data = JSON.stringify(fileData)
+
+            if (fileData.pinned) {
+                document.querySelector('.pin svg').classList.add('pinned')
+                document.querySelector('.pin span').textContent = 'Unpin'
+            } else {
+                document.querySelector('.pin svg').classList.remove('pinned')
+                document.querySelector('.pin span').textContent = 'Pin'
+            }
+
+            try {
+                await fetch('/toggle', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({toggle: 'pinned', itemid: fileData.id})
                 })
             }
             catch {

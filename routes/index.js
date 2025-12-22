@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, checkUserOwnsAssetUsingId, toggleStar } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -173,6 +173,7 @@ router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
 router.patch('/toggle', isAuthenticated, express.json(), async (req, res) => {
   try {
     if (req.body.toggle === "starred") await toggleStar(req.body.itemid)
+    else if (req.body.toggle === "pinned") {await togglePin(req.body.itemid)}
   }
   catch (error) {
     console.error(error)
