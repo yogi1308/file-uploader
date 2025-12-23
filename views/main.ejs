@@ -67,8 +67,8 @@
                 <div class="col-type">Type</div>
                 <div class="col-size">Size</div>
             </div>
-            <% if (locals.parentFolder === 'recent') { %>
-                <% folders.recentItems.forEach(file => { %>
+            <% if (parentFolder === 'recent' || parentFolder === 'videos' || parentFolder === 'photos' || parentFolder === 'documents' ) { %>
+                <% folders.items.forEach(file => { %>
                     <div class="list-row folder-item" onclick="listRowClicked(event)" data-data="<%= JSON.stringify(file) %>" <%- file.type === 'folder' ? `ondblclick="window.location.href='/?folder=${encodeURIComponent(file.path.replace(user.id + '/', ''))}'"` : '' %> >
                         <div class="name-and-svg">
                             <% if (file.type === 'folder') { %>

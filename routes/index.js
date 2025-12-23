@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar, getPinned, getStarred, getRecent } = require("../lib/queries");
+const { findUser, createUser, postUploadDbUpdate, getUserFiles, createFolder, getUserFolders, checkFolderExists, checkUserOwnsAsset, deleteFromDB, checkUserOwnsAssetUsingPublicId, renameFromDB, togglePin, toggleStar, getPinned, getStarred, getRecent, getVideos, getPhotos, getDocuments } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -14,7 +14,8 @@ const upload = multer({
   }
 })
 const {uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary, renameCloudinaryFile} = require("../upload/cloudinary");
-const { user } = require("../lib/prisma");
+
+
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -104,8 +105,10 @@ router.post("/signup",
 
 router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
   try {
-    await postUploadDbUpdate(req.user.id, req.uploads)
-    const redirectUrl = req.query.folder ? `/?folder=${encodeURIComponent(req.query.folder)}` : "/";
+    await postUploadDbUpdate(req.user.id, req.uploads, req.query.folder)
+    let redirectUrl = ''
+    if (req.query.folder === 'recent' || req.query.folder === 'videos'  || req.query.folder === 'documents' || req.query.folder === 'photos' || req.query.folder === 'starred') {redirectUrl = `/${req.query.folder}`}
+    else {redirectUrl = req.query.folder ? `/?folder=${encodeURIComponent(req.query.folder)}` : "/";}
     res.redirect(redirectUrl)
   }
   catch (error) {
@@ -121,8 +124,9 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
       throw new Error("Folder already exists");
     }
     const cloudFolder = await createFolderInCloudinary(req.user.id, req.body.folderName, req.query.folder);
-    await createFolder(req.user.id, cloudFolder)
-    const redirectUrl = req.query.folder ? `/?folder=${encodeURIComponent(req.query.folder)}` : "/";
+    await createFolder(req.user.id, cloudFolder, req.query.folder)
+    if (req.query.folder === 'recent' || req.query.folder === 'videos'  || req.query.folder === 'documents' || req.query.folder === 'photos' || req.query.folder === 'starred') {redirectUrl = `/${req.query.folder}`}
+    else {redirectUrl = req.query.folder ? `/?folder=${encodeURIComponent(req.query.folder)}` : "/";}
     res.redirect(redirectUrl)
   }
   catch (error) {
@@ -207,7 +211,46 @@ router.get('/recent', isAuthenticated, async (req, res) => {
       getRecent(req.user.id),
       getPinned(req.user.id)
     ])
-    res.render("index", { user: req.user , recent: recentItems, parentFolder: 'recent', pinned: pinned})
+    res.render("index", { user: req.user , items: recentItems, parentFolder: 'recent', pinned: pinned})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/videos', isAuthenticated, async (req, res) => {
+  try {
+    const [items, pinned] = await Promise.all([
+      getVideos(req.user.id),
+      getPinned(req.user.id)
+    ])
+    res.render("index", { user: req.user , items: items, parentFolder: 'videos', pinned: pinned})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/photos', isAuthenticated, async (req, res) => {
+  try {
+    const [items, pinned] = await Promise.all([
+      getPhotos(req.user.id),
+      getPinned(req.user.id)
+    ])
+    res.render("index", { user: req.user , items: items, parentFolder: 'photos', pinned: pinned})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/documents', isAuthenticated, async (req, res) => {
+  try {
+    const [items, pinned] = await Promise.all([
+      getDocuments(req.user.id),
+      getPinned(req.user.id)
+    ])
+    res.render("index", { user: req.user , items: items, parentFolder: 'documents', pinned: pinned})
   }
   catch (error) {
     console.error(error)

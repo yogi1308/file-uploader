@@ -11,7 +11,7 @@
     <div class="index">
         <%- include('navbar') %>
         <%- include('sidebar', {user: user, pinned: pinned, parentFolder: parentFolder})%>
-        <%- parentFolder === 'recent' ? include('main', {user: user, folders: {recentItems: recent, userFolders: recent}, files: {userFiles: []}, parentFolder: parentFolder}) : include('main', {user: user, files: files, folders: folders, parentFolder: parentFolder}) %>
+        <%- parentFolder === 'recent' || parentFolder === 'videos' || parentFolder === 'photos' || parentFolder === 'documents' ? include('main', {user: user, folders: {items: items, userFolders: items}, files: {userFiles: []}, parentFolder: parentFolder}) : include('main', {user: user, files: files, folders: folders, parentFolder: parentFolder}) %>
         <%- include('upload')%>
         <%- include('new-folder-dialog', {user: user, parentFolder: parentFolder}) %>
     </div>

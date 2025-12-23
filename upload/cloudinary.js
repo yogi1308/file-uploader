@@ -10,6 +10,7 @@ cloudinary.config({
 const uploadToCloudinary = async (req, res, next) => {
   let assetFolder = ""
   req.query.folder !== undefined ? assetFolder = `${req.user.id}/${req.query.folder}` : `${req.user.id}`
+  if (req.query.folder === 'recent' || req.query.folder === 'videos'  || req.query.folder === 'documents' || req.query.folder === 'photos' || req.query.folder === 'starred') {assetFolder = req.user.id}
   try {
   const uploads = req.files
   let uploadURLS = []
@@ -48,7 +49,7 @@ const uploadToCloudinary = async (req, res, next) => {
 }
 
 const createFolderInCloudinary = async (userid, folderName, folderPath = "") => {
-  return folderPath === "" ? await cloudinary.api.create_folder(`${userid}/${folderName}`) : await cloudinary.api.create_folder(`${userid}/${folderPath}/${folderName}`);
+  return folderPath === "" || folderPath === 'recent' || folderPath === 'videos'  || folderPath === 'documents' || folderPath === 'photos' || folderPath === 'starred'? await cloudinary.api.create_folder(`${userid}/${folderName}`) : await cloudinary.api.create_folder(`${userid}/${folderPath}/${folderName}`);
 }
 
 const createNewUserFolder = async (userid) => {
