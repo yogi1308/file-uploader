@@ -451,7 +451,6 @@ h2, h3 {margin: 0;}
   gap: 5px;
   width: calc(100% - 20px);
   padding: 10px 0px;
-  border-bottom: 1px solid;
 }
 
 .pinned-folder {
