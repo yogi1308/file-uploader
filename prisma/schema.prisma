@@ -28,7 +28,7 @@ model User {
   password      String
 
   files         Files[]
-  folders       Folder[]
+  folders       Folders[]
   
 
   @@map("users")
@@ -49,15 +49,12 @@ model Files {
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  folderId     String?
-  folder       Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
-
   @@map("files")
 }
 
-model Folder {
+model Folders {
   id         String @id @default(uuid())
-  path       String
+  location   String
   name       String
   date       DateTime
   size       Int
@@ -67,8 +64,6 @@ model Folder {
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  files        Files[]
 
   @@map("folder")
 }
