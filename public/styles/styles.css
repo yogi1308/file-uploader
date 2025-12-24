@@ -45,3 +45,24 @@ h1, h2, h3, h4, h5, h6 {
 #root, #__next {
   isolation: isolate;
 }
+
+:root {
+  --bg-main: rgb(18, 18, 18);
+  --text-main: white;
+  --text-accent: #a6e3ff;
+  --border-main: #6c6c74;
+  --primary: #1289d3;
+  --primary-hover: #133d57;
+  --font-stack: "Roboto", "Montserrat", sans-serif;
+  --radius: 5px;
+  --space-xs: 5px;
+  --space-sm: 10px;
+  --space-md: 1rem;
+  --space-lg: 20px;
+  --border: 1px solid var(--border-main);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
