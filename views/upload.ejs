@@ -1,8 +1,8 @@
-<dialog>
-    <form action="/upload<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>" method="post" class="upload-form" enctype="multipart/form-data">
+<dialog class="card">
+    <form action="/upload<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
         <input type="file" name="file" id="file" multiple>
         <div id="file-list"></div>
-        <div class="file-form">
+        <div class="file-form fl-horiz">
             <button type="submit">Upload</button>
             <button class="cancel" type="button" onclick="document.querySelector('dialog').close()">Cancel</button>
         </div>
