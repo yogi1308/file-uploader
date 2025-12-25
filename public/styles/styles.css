@@ -67,12 +67,18 @@ body {
   background-color: var(--bg-main);
   color: var(--text-main);
   font-family: var(--font-stack);
+  padding: var(--space-xs);
 }
 
 .fl-vert {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+.fl-horiz {
+  display: flex;
+  gap: var(--space-xs);
 }
 
 .card {
@@ -82,7 +88,22 @@ body {
   padding: var(--space-md);
 }
 
-h1 {font-weight: 500;}
+.card2 {
+  background-color: var(--bg-sec);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-xs);
+  text-align: center;
+}
+
+.center {
+  align-items: center;
+  justify-items: center;
+}
+
+.width100 {width: 100%;}
+
+h1 {font-weight: 700; font-size: 1.5em;}
 
 .signup-div, .login-div {
     width: clamp(300px, 35vw, 100rem);
@@ -115,3 +136,66 @@ button:disabled:hover {
 }
 
 a {color: var(--text-accent);}
+
+.index {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: max-content;
+  height: calc(100vh - 10px);
+  width: calc(100vw - 10px);
+  border: var(--border);
+  border-radius: 15px;
+  corner-shape: squircle;
+}
+
+navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm);
+  grid-column: span 2;
+  border-bottom: 1px solid #6c6c74;
+  align-items: center;
+}
+
+.sidebar {
+  border-right: var(--border);
+  padding: var(--space-sm);
+  gap: var(--space-sm);
+}
+
+.new-file, .new-folder {
+  padding: var(--space-sm);
+}
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.categories > div {
+  display: flex;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.categories > div > p {flex: 1;}
+
+.categories > div:hover > *, .categories > div.active > * {
+  background-color: var(--primary);
+  transition: all 0.3s ease-in;
+  cursor: pointer;
+}
+
+.categories > div > svg {
+  height: min-content;
+  width: auto;
+}
+
+.pointer {cursor: pointer;}
+
+.pinned:has(*) {border-top: var(--border); padding-top: var(--space-xs);}
+
+.pinned-folder {padding: 0px var(--space-xs);}
+
+.pinned-folder > svg {margin-right: var(--space-xs);}

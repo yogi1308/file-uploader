@@ -36,6 +36,10 @@ app.use(
   })
 );
 app.use(passport.session())
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
 
 app.use("/", indexRouter)
 
