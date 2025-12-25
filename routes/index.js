@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { findUser } = require("../lib/queries");
+const { createUser } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {} = require("../upload/cloudinary");
+const {createNewUserFolder} = require("../upload/cloudinary");
 
 
 
@@ -27,12 +27,16 @@ function isAuthenticated(req, res, next) {
 router.post("/login",
   passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/login"
+    failureRedirect: "/login",
+    failureMessage: true
   })
 );
 
 router.get("/login", (req, res) => {
-  res.render("login")
+  const errors = req.session.messages || [];
+  req.session.messages = [];
+  console.log(errors)
+  res.render("login", { errors });
 });
 
 router.get("/logout", (req, res, next) => {
@@ -47,17 +51,18 @@ router.get("/signup", (req, res) => {
 });
 
 router.get("/", isAuthenticated, async (req, res) => {
-  const path = req.query.folder ? `${req.user.id}/${req.query.folder}` : req.user.id
+  // const path = req.query.folder ? `${req.user.id}/${req.query.folder}` : req.user.id
 
-  const [userFiles, cloudinaryFolders, pinned] = await Promise.all([
-    getUserFiles(path),
-    getFolders(path),
-    getPinned(req.user.id)
-  ])
+  // const [userFiles, cloudinaryFolders, pinned] = await Promise.all([
+  //   getUserFiles(path),
+  //   getFolders(path),
+  //   getPinned(req.user.id)
+  // ])
 
-  const userFolders = await getUserFolders(cloudinaryFolders)
+  // const userFolders = await getUserFolders(cloudinaryFolders)
 
-  res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: req.query.folder, pinned: pinned})
+  // res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: req.query.folder, pinned: pinned})
+   res.render("index", { user: req.user})
 })
 
 router.post("/signup",

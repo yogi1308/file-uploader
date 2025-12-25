@@ -11,8 +11,10 @@
 <body>
     <div class="index">
         <%- include('navbar') %>
-        <%- include('sidebar', {user: user, pinned: pinned})%>
-        <%- include('main', {user: user, assets}) %>
+        <%# include('sidebar', {user: user, pinned: pinned}) %>
+        <%# include('main', {user: user, assets}) %>
+        <%- include('sidebar', {user: user})%>
+        <%- include('main', {user: user}) %>
         <%- include('upload')%>
         <%- include('new-folder-dialog', {user: user}) %>
     </div>

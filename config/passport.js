@@ -8,7 +8,8 @@ module.exports = function(passport) {
         try {
             let user = null
             const rows = await findUser(username);
-            if (!rows) {
+            console.log(rows, "rows log")
+            if (!rows || rows.length === 0) {
                 return done(null, false, { message: "Incorrect username" });
             }
             let match = false

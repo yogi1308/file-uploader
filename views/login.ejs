@@ -6,9 +6,14 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📂</text></svg>">
   </head>
   <body>
-    <div class="login-div">
+    <div class="login-div card">
         <h1>Welcome back</h1>
-        <form action="/login" method="POST" class="login-form">
+        <% if (locals.errors) { %>
+          <% errors.forEach(function(error) { %>
+            <p style="color: red;"><%= error %></p>
+          <% }); %>
+        <% } %>
+        <form action="/login" method="POST" class="login-form fl-vert">
           <div class="input-div">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
@@ -18,8 +23,8 @@
             <input type="password" id="password" name="password" required>
           </div>
           <button type="submit">Login</button>
+          <p>Don't have an account? <a href="/signup">Sign up</a></p>
         </form>
-        <p>Don't have an account? <a href="/signup">Sign up</a></p>
     </div>
   </body>
 </html>

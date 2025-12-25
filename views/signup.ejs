@@ -6,12 +6,12 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📂</text></svg>">
   </head>
   <body>
-    <div class="signup-div">
+    <div class="signup-div card">
         <h1>Create a new account</h1>
-        <form action="/signup" method="POST" class="signup-form" autocomplete="off">
+        <form action="/signup" method="POST" class="signup-form fl-vert" autocomplete="off">
             <div class="input-div">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" value="<%= locals.userInput ? userInput.username : '' %>" required minlength="3">
+                <input type="text" id="username" name="username" value="<%= locals.userInput ? userInput.username : '' %>" required minlength="4">
             </div>
             <div class="input-div">
                 <label for="password">Password:</label>
@@ -23,8 +23,8 @@
                 <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" oninput="checkPasswordMatch(); checkPassword(document.getElementById('password').value); enableSubmit()" required>
             </div>
           <button type="submit" disabled>Sign up</button>
+          <p>Already have an account? <a href="/login">Login</a></p>
         </form>
-        <p>Already have an account? <a href="/login">Login</a></p>
     </div>
     <script>
       function checkPasswordMatch() {
