@@ -1,5 +1,5 @@
 <dialog class="card">
-    <form action="/upload<%= locals.parentFolder ? '?folder=' + encodeURIComponent(locals.parentFolder) : '' %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
+    <form action="/upload<%= currFolder ? '?folder=' + encodeURIComponent(currFolder) : '' %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
         <input type="file" name="file" id="file" multiple>
         <div id="file-list"></div>
         <div class="file-form fl-horiz">
@@ -25,7 +25,7 @@
             const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 10MB
             const totalSize = Array.from(fileInput.files).reduce((acc, file) => acc + file.size, 0);
             if (totalSize > MAX_TOTAL_SIZE) {
-                alert("Total size of all files combined cannot exceed 3MB.");
+                alert("Total size of all files combined cannot exceed 4MB.");
                 fileInput.value = "";
                 return;
             }

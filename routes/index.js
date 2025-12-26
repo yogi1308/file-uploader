@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {createNewUserFolder} = require("../upload/cloudinary");
+const {createNewUserFolder, uploadToCloudinary} = require("../upload/cloudinary");
 
 
 
@@ -51,18 +51,9 @@ router.get("/signup", (req, res) => {
 });
 
 router.get("/", isAuthenticated, async (req, res) => {
-  // const path = req.query.folder ? `${req.user.id}/${req.query.folder}` : req.user.id
-
-  // const [userFiles, cloudinaryFolders, pinned] = await Promise.all([
-  //   getUserFiles(path),
-  //   getFolders(path),
-  //   getPinned(req.user.id)
-  // ])
-
-  // const userFolders = await getUserFolders(cloudinaryFolders)
-
-  // res.render("index", { user: req.user , files: {userFiles}, folders: {userFolders}, parentFolder: req.query.folder, pinned: pinned})
-   res.render("index", { user: req.user})
+  const currFolder = req.user.id
+  const assets = await getUserAssets(req.user.id, currFolder)
+  res.render("index", { user: req.user, currFolder: currFolder, assets: assets})
 })
 
 router.post("/signup",
@@ -107,5 +98,16 @@ router.post("/signup",
             return next(error);
         }
 });
+
+router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
+  try {
+    await fileUpload(req.user.id, req.uploads, req.query.folder)
+    res.redirect("/")
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).send("Error uploading files")
+  }
+})
 
 module.exports = router;

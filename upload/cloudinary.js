@@ -8,9 +8,6 @@ cloudinary.config({
 })
 
 const uploadToCloudinary = async (req, res, next) => {
-  let assetFolder = ""
-  req.query.folder !== undefined ? assetFolder = `${req.user.id}/${req.query.folder}` : `${req.user.id}`
-  if (req.query.folder === 'recent' || req.query.folder === 'videos'  || req.query.folder === 'documents' || req.query.folder === 'photos' || req.query.folder === 'starred') {assetFolder = req.user.id}
   try {
   const uploads = req.files
   let uploadURLS = []
@@ -27,9 +24,8 @@ const uploadToCloudinary = async (req, res, next) => {
       result = await cloudinary.uploader.upload(dataURI, {
         resource_type: "auto",
         public_id: public_id,
-        overwrite: true,
-        folder: req.user.id,
-        asset_folder: assetFolder
+        overwrite: false,
+        asset_folder: req.query.folder
         // TODO: FIX ACCESS
       });
       if (result.existing) {
