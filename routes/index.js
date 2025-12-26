@@ -9,7 +9,7 @@ const storage = multer.memoryStorage()
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 4 * 1024 * 1024, // Limit file size to 10MB
+    fileSize: 4 * 1024 * 1024, // Limit file size to 4MB
     files: 5 // Limit to 5 files per upload
   }
 })
@@ -102,7 +102,8 @@ router.post("/signup",
 router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
   try {
     await fileUpload(req.user.id, req.uploads, req.query.folder)
-    res.redirect("/")
+    const redirectUrl = req.query.folder === req.user.id ? "/" : `/?folder=${encodeURIComponent(req.query.folder.substring(req.query.folder.indexOf('/') + 1))}`
+    res.redirect(redirectUrl)
   }
   catch (error) {
     console.log(error)
@@ -116,9 +117,10 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
     if (exists) {
       throw new Error("Folder already exists");
     }
-    const cloudFolder = await createFolderInCloudinary(req.user.id, req.body.folderName);
+    const cloudFolder = await createFolderInCloudinary(req.query.folder, req.body.folderName);
     await createFolder(req.user.id, cloudFolder)
-    res.redirect("/")
+    const redirectUrl = req.query.folder === req.user.id ? "/" : `/?folder=${encodeURIComponent(req.query.folder.substring(req.query.folder.indexOf('/') + 1))}`
+    res.redirect(redirectUrl)
   }
   catch (error) {
     if (error.message === "Folder already exists") {
