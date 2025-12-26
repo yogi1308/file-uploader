@@ -68,6 +68,7 @@ body {
   color: var(--text-main);
   font-family: var(--font-stack);
   padding: var(--space-xs);
+  transition: all 0.3s ease-in;
 }
 
 .fl-vert {
@@ -282,6 +283,12 @@ dialog.card > form{
 dialog.new-folder-dialog > form {width: 100%;}
 
 dialog.new-folder-dialog > .upload-form > input {margin-bottom: var(--space-sm);}
+
+.upload > div, .username {transition: all 0.3s ease-in;}
+
+.upload > div:hover {background-color: var(--primary);}
+
+.username:hover {text-decoration: underline var(--primary);}
 
 input:focus {outline: var(--border)}
 

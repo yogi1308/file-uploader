@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, checkFolderExists, createFolder } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {createNewUserFolder, uploadToCloudinary} = require("../upload/cloudinary");
+const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary} = require("../upload/cloudinary");
 
 
 
@@ -107,6 +107,29 @@ router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary
   catch (error) {
     console.log(error)
     res.status(500).send("Error uploading files")
+  }
+})
+
+router.post('/upload-folder', isAuthenticated, async (req, res) => {
+  try {
+    const exists = await checkFolderExists(req.user.id, req.body.folderName);
+    if (exists) {
+      throw new Error("Folder already exists");
+    }
+    const cloudFolder = await createFolderInCloudinary(req.user.id, req.body.folderName);
+    await createFolder(req.user.id, cloudFolder)
+    res.redirect("/")
+  }
+  catch (error) {
+    if (error.message === "Folder already exists") {
+      const currFolder = req.user.id
+      const assets = await getUserAssets(req.user.id, currFolder)
+      return res.render("index", { user: req.user, error: error.message, currFolder: currFolder, assets: assets });
+    }
+    else {
+      console.log(error)
+      res.status(500).send("Error uploading files")
+    }
   }
 })
 

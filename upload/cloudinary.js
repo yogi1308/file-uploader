@@ -45,7 +45,7 @@ const uploadToCloudinary = async (req, res, next) => {
 }
 
 const createFolderInCloudinary = async (userid, folderName, folderPath = "") => {
-  return folderPath === "" || folderPath === 'recent' || folderPath === 'videos'  || folderPath === 'documents' || folderPath === 'photos' || folderPath === 'starred'? await cloudinary.api.create_folder(`${userid}/${folderName}`) : await cloudinary.api.create_folder(`${userid}/${folderPath}/${folderName}`);
+  return await cloudinary.api.create_folder(`${userid}/${folderName}`)
 }
 
 const createNewUserFolder = async (userid) => {
