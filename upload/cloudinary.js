@@ -9,36 +9,36 @@ cloudinary.config({
 
 const uploadToCloudinary = async (req, res, next) => {
   try {
-  const uploads = req.files
-  let uploadURLS = []
-  for (const file of uploads) {
-    const b64 = Buffer.from(file.buffer).toString("base64");
-    let dataURI = "data:" + file.mimetype + ";base64," + b64;
+    const uploads = req.files
+    let uploadURLS = []
+    for (const file of uploads) {
+      const b64 = Buffer.from(file.buffer).toString("base64");
+      let dataURI = "data:" + file.mimetype + ";base64," + b64;
 
-    const parsedName = path.parse(file.originalname);
-    let public_id = parsedName.base;
-    let counter = 1;
-    let result;
+      const parsedName = path.parse(file.originalname);
+      let public_id = parsedName.base;
+      let counter = 1;
+      let result;
 
-    while (true) {
-      result = await cloudinary.uploader.upload(dataURI, {
-        resource_type: "auto",
-        public_id: public_id,
-        overwrite: false,
-        asset_folder: req.query.folder
-        // TODO: FIX ACCESS
-      });
-      if (result.existing) {
-        public_id = `${parsedName.name} (${counter})${parsedName.ext}`;
-        counter++;
-      } else {
-        break;
+      while (true) {
+        result = await cloudinary.uploader.upload(dataURI, {
+          resource_type: "auto",
+          public_id: public_id,
+          overwrite: false,
+          asset_folder: req.query.folder
+          // TODO: FIX ACCESS
+        });
+        if (result.existing) {
+          public_id = `${parsedName.name} (${counter})${parsedName.ext}`;
+          counter++;
+        } else {
+          break;
+        }
       }
+      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id});
     }
-    uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id});
-  }
-  req.uploads = uploadURLS
-  next()
+    req.uploads = uploadURLS
+    next()
   } catch (error) {
     next(error)
   }

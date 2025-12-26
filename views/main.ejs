@@ -1,9 +1,14 @@
 <div class="main fl-vert">
     <div class="breadcrumbs fl-horiz" >
-        <span onclick="window.location.href='/'"> <%= user.username %></span> 
-        <span>
-            <svg style="transform: rotate(-90deg);" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> 
-        </span>
+        <span onclick="window.location.href='/'" class="pointer hover-underline"> <%= user.username %></span> 
+        <% let subfolderLink = '' %>
+        <% currFolder.split('/').slice(1).forEach(subfolder => { %>
+            <% subfolderLink += subfolder %>
+            <span class="fl-horiz" >
+                <svg style="transform: rotate(-90deg);" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> 
+                <p onclick="window.location.href='/?folder=<%= encodeURIComponent(subfolderLink) %>'" class="pointer hover-underline" > <%= subfolder %> </p>
+            </span>
+        <% }) %>
     </div>
     <% if (assets.length === 0) { %>
         <div class="nothing-uploaded">
@@ -58,14 +63,18 @@
             </div>
             <div class="fl-vert assets-list-container">
                 <% assets.forEach(asset => { %>
-                    <div class="list-row folder-item card" >
+                    <div class="list-row folder-item card" 
+                    <% if (asset.type === 'folder') { %>
+                        ondblclick="window.location.href='/?folder=<%= encodeURIComponent((asset.location + '/' + asset.name).replace(user.id + '/', '')) %>'"
+                    <% } %> >
                         <div class="name-and-svg fl-horiz">
                             <% if (asset.type === 'folder') { %>
                                 <svg title="Folder" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>
+                                <div class="col-name text-wrap" title="<%= asset.name %>"> <%= asset.name %> </div>
                             <% } else { %>
                                 <svg title="File" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>
+                                <div class="col-name text-wrap" title="<%= asset.name %>"><%= asset.name %></div>
                             <% } %>
-                            <div class="col-name text-wrap" title="<%= asset.name %>"><%= asset.name %></div>
                         </div>
                         <div class="col-date text-wrap" title="<%= new Date(asset.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>"><%= new Date(asset.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
                         <div class="col-type text-wrap" title="<%= asset.type %>"><%= asset.type %></div>
