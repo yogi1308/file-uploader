@@ -343,6 +343,14 @@ div.options svg {
 
 .list-row:hover { background-color: var(--primary-hover); cursor: pointer;}
 
+.not-active > button, .not-active > button > svg {
+  color: var(--border-main);
+  fill: var(--border-main);
+}
+
+.not-active > button:hover {background: var(--bg-sec);}
+
+.pin {display: none;}
 
 
 

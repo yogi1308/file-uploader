@@ -53,6 +53,7 @@ router.get("/signup", (req, res) => {
 router.get("/", isAuthenticated, async (req, res) => {
   const currFolder = req.query.folder !== undefined ? `${req.user.id}/${req.query.folder}` : req.user.id
   const assets = await getUserAssets(req.user.id, currFolder)
+  // think if we need a separate getPinned function because getUserAssets gets assets relative to the user's location and pinned needs all folders from a user
   res.render("index", { user: req.user, currFolder: currFolder, assets: assets})
 })
 

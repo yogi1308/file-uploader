@@ -27,7 +27,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                 </div>
             </div>
-            <div class="options fl-horiz" >
+            <div class="options fl-horiz not-active">
                 <button class="pin fl-horiz center" onclick="togglePin(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
                     <span>Pin</span>
@@ -63,7 +63,7 @@
             </div>
             <div class="fl-vert assets-list-container">
                 <% assets.forEach(asset => { %>
-                    <div class="list-row folder-item card" 
+                    <div class="list-row card" onclick="assetClicked(event, <%= JSON.stringify(asset) %>)"
                     <% if (asset.type === 'folder') { %>
                         ondblclick=" window.location.href='/?folder=<%= encodeURIComponent((asset.location + '/' + asset.name).replace(user.id + '/', '')) %>'"
                     <% } %> >
@@ -85,3 +85,15 @@
         </div>
     <% } %>
 </div>
+<script>
+    let assetData = ''
+    const optionsDiv = document.querySelector('.options')
+    function assetClicked(e, asset) {
+        assetData = asset
+        optionsDiv.classList.remove('not-active')
+        document.querySelectorAll('.list-row').forEach(row => { row.style.background = ''});
+        e.target.closest('.list-row').style.background = 'var(--primary)'
+        if (assetData.type === 'folder') {document.querySelector('.pin').style.display = 'flex'}
+        else {document.querySelector('.pin').style.display = ''}
+    }
+</script>
