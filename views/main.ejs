@@ -28,11 +28,11 @@
                 </div>
             </div>
             <div class="options fl-horiz not-active">
-                <button class="pin fl-horiz center" onclick="togglePin(event)">
+                <button class="pin fl-horiz center" onclick="toggleAsset('pinned')">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
                     <span>Pin</span>
                 </button>
-                <button class="star fl-horiz center" onclick="toggleStar(event)">
+                <button class="star fl-horiz center" onclick="toggleAsset('starred')">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/></svg>
                     <span>Star</span>
                 </button>
@@ -88,12 +88,91 @@
 <script>
     let assetData = ''
     const optionsDiv = document.querySelector('.options')
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.list-row') && !e.target.closest('.options')) {
+            assetData = ''
+            optionsDiv.classList.add('not-active')    
+            document.querySelectorAll('.list-row').forEach(row => { row.style.background = ''});    
+            document.querySelector('.pin').style.display = ''
+            optionsDiv.querySelector('.pin svg').style.fill = ''
+            optionsDiv.querySelector('.pin span').textContent = 'Pin'
+            optionsDiv.querySelector('.star svg').style.fill = ''
+            optionsDiv.querySelector('.star span').textContent = 'Star'
+        }
+    })
+
     function assetClicked(e, asset) {
         assetData = asset
         optionsDiv.classList.remove('not-active')
         document.querySelectorAll('.list-row').forEach(row => { row.style.background = ''});
         e.target.closest('.list-row').style.background = 'var(--primary)'
-        if (assetData.type === 'folder') {document.querySelector('.pin').style.display = 'flex'}
-        else {document.querySelector('.pin').style.display = ''}
+        if (assetData.type === 'folder') {
+            document.querySelector('.pin').style.display = 'flex'
+            if (assetData.pinned) {
+                optionsDiv.querySelector('.pin span').textContent = 'Unpin'
+                optionsDiv.querySelector('.pin svg').style.fill = 'var(--primary)'
+            } 
+            else {
+                optionsDiv.querySelector('.pin span').textContent = 'Pin'
+                optionsDiv.querySelector('.pin svg').style.fill = ''
+            }
+        }
+        else {
+            document.querySelector('.pin').style.display = ''
+        }    
+        if (assetData.starred) {
+            optionsDiv.querySelector('.star svg').style.fill = 'gold' 
+            optionsDiv.querySelector('.star span').textContent = 'Unstar'
+        }
+        else {
+            optionsDiv.querySelector('.star svg').style.fill = ''
+            optionsDiv.querySelector('.star span').textContent = 'Star'
+        }
     }
+
+    async function toggleAsset(toggleType) {
+        assetData[toggleType] = !assetData[toggleType]
+        const isPinned = toggleType === 'pinned'
+        const btnClass = isPinned ? '.pin' : '.star'
+        const activeFill = isPinned ? 'var(--primary)' : 'gold'
+        const activeText = isPinned ? 'Unpin' : 'Unstar'
+        const inactiveText = isPinned ? 'Pin' : 'Star'
+        
+        const btn = optionsDiv.querySelector(btnClass)
+        btn.querySelector('span').textContent = assetData[toggleType] ? activeText : inactiveText
+        btn.querySelector('svg').style.fill = assetData[toggleType] ? activeFill : ''
+
+        if (assetData.pinned) {
+            newPin = document.createElement('div')
+            newPin.classList.add('pinned-folder', 'fl-horiz', 'width100')
+            pinnedContainer = document.querySelector('.pinned')
+            pinnedContainer.appendChild(newPin)
+            newPin.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+                <p style="cursor:pointer; text-align: center; flex: 1" onclick="window.location.href='/?folder=${encodeURIComponent((assetData.location + '/' + assetData.name).replace('<%= user.id %>/', ''))}'"> ${assetData.name} </p>
+            `
+        }
+        else if(!assetData.pinned) {
+            pinnedFolders = document.querySelectorAll('.pinned-folder')
+            pinnedContainer = document.querySelector('.pinned')
+            pinnedFolders.forEach(folder => {
+                if (folder.querySelector('p').textContent.trim() === assetData.name) {
+                    pinnedContainer.removeChild(folder)
+                }
+            })
+        }
+        
+        try {
+            await fetch('/toggle', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({toggle: toggleType, assetData: assetData})
+            })
+        }
+        catch {
+            alert('An error occurred while updating the item.');
+        }
+    }
+
 </script>

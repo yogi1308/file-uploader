@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, checkFolderExists, createFolder } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -53,8 +53,8 @@ router.get("/signup", (req, res) => {
 router.get("/", isAuthenticated, async (req, res) => {
   const currFolder = req.query.folder !== undefined ? `${req.user.id}/${req.query.folder}` : req.user.id
   const assets = await getUserAssets(req.user.id, currFolder)
-  // think if we need a separate getPinned function because getUserAssets gets assets relative to the user's location and pinned needs all folders from a user
-  res.render("index", { user: req.user, currFolder: currFolder, assets: assets})
+  const allAssets = await getAllAssets(req.user.id, 'folders')
+  res.render("index", { user: req.user, currFolder: currFolder, assets: assets, allAssets: allAssets})
 })
 
 router.post("/signup",
@@ -133,6 +133,16 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
       console.log(error)
       res.status(500).send("Error uploading files")
     }
+  }
+})
+
+router.patch('/toggle', isAuthenticated, express.json(), async (req, res) => {
+  try {
+    await toggle(req.body.toggle, req.body.assetData)
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error updating item");
   }
 })
 
