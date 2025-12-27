@@ -68,7 +68,7 @@ body {
   color: var(--text-main);
   font-family: var(--font-stack);
   padding: var(--space-xs);
-  transition: all 0.3s ease-in;
+  transition: all 0.2s ease-in;
 }
 
 .fl-vert {
@@ -129,7 +129,7 @@ input, button {
   padding: var(--space-xs);
   width: 100%;
   color: var(--text-main);
-  transition: all 0.3s ease-in;
+  transition: all 0.2s ease-in;
 }
 
 button:hover {
@@ -190,7 +190,7 @@ navbar {
 
 .categories > div:hover > *, .categories > div.active > * {
   background-color: var(--primary);
-  transition: all 0.3s ease-in;
+  transition: all 0.2s ease-in;
   cursor: pointer;
 }
 
@@ -284,7 +284,7 @@ dialog.new-folder-dialog > form {width: 100%;}
 
 dialog.new-folder-dialog > .upload-form > input {margin-bottom: var(--space-sm);}
 
-.upload > div {transition: all 0.3s ease-in;}
+.upload > div {transition: all 0.2s ease-in;}
 
 .upload > div:hover {background-color: var(--primary);}
 
@@ -339,7 +339,7 @@ div.options svg {
 }
 .list-header {margin-bottom: var(--space-xs);}
 
-.list-row {transition: all 0.3s ease-in;}
+.list-row {transition: all 0.2s ease-in;}
 
 .list-row:hover { background-color: var(--primary-hover); cursor: pointer;}
 
@@ -351,6 +351,8 @@ div.options svg {
 .not-active > button:hover {background: var(--bg-sec);}
 
 .pin {display: none;}
+
+.pin:hover svg {fill: white !important;}
 
 
 

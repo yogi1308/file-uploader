@@ -146,12 +146,19 @@
         if (assetData.pinned) {
             newPin = document.createElement('div')
             newPin.classList.add('pinned-folder', 'fl-horiz', 'width100')
-            pinnedContainer = document.querySelector('.pinned')
-            pinnedContainer.appendChild(newPin)
             newPin.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
                 <p style="cursor:pointer; text-align: center; flex: 1" onclick="window.location.href='/?folder=${encodeURIComponent((assetData.location + '/' + assetData.name).replace('<%= user.id %>/', ''))}'"> ${assetData.name} </p>
             `
+            pinnedContainer = document.querySelector('.pinned')
+            const existingPins = Array.from(pinnedContainer.querySelectorAll('.pinned-folder'))
+            const nextPin = existingPins.find(pin => pin.querySelector('p').textContent.trim().localeCompare(assetData.name) > 0)
+            
+            if (nextPin) {
+                pinnedContainer.insertBefore(newPin, nextPin)
+            } else {
+                pinnedContainer.appendChild(newPin)
+            }
         }
         else if(!assetData.pinned) {
             pinnedFolders = document.querySelectorAll('.pinned-folder')
