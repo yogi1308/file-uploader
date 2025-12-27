@@ -1,6 +1,6 @@
 <dialog class="card">
     <form action="/upload?folder=<%= encodeURIComponent(currFolder) %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
-        <input type="file" name="file" id="file" multiple>
+        <input type="file" name="file" id="file" multiple >
         <div id="file-list"></div>
         <div class="file-form fl-horiz">
             <button type="submit">Upload</button>
@@ -19,6 +19,13 @@
             if (fileInput.files.length > 5) {
                 alert("You can only upload a maximum of 5 files at a time.");
                 fileInput.value = ""; // Clear the selection
+                return;
+            }
+
+            const invalidChars = /[\/\\:*?"<>|]/;
+            if (Array.from(fileInput.files).some(file => invalidChars.test(file.name))) {
+                alert('File names cannot contain / \\ : * ? " < > |');
+                fileInput.value = "";
                 return;
             }
 
