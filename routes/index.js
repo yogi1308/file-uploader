@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed } = require("../lib/queries");
 const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
@@ -14,7 +14,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary, renameCloudinaryFile} = require("../upload/cloudinary");
+const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary, renameCloudinaryFile, renameFolderInCloudinary} = require("../upload/cloudinary");
 
 
 
@@ -190,6 +190,10 @@ router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
     if (req.body.assetData.type !== 'folder') {
       await renameCloudinaryFile(req.body.assetData, req.body.newDisplayName, getResourceType(req.body.assetData.type))
       await renameFromDB(req.body.assetData, req.body.newDisplayName)
+    }
+    else {
+      await renameFolderInCloudinary(`${req.body.assetData.location}/${req.body.assetData.name}`, `${req.body.assetData.location}/${req.body.newDisplayName}`)
+      await renameFromDBWhenFolderRenamed(req.body.assetData, req.body.newDisplayName)
     }
   }
   catch (error) {

@@ -62,6 +62,17 @@ async function deleteFromCloudinary(assetId) {
   }
 }
 
+async function deleteFolderFromCloudinary(location) {
+  try {
+    const result = await cloudinary.api.delete_folder(location)
+    console.log(result);
+  }
+  catch (error) {
+    console.error("Error deleting from Cloudinary:", error);
+    throw error;
+  }
+}
+
 async function renameCloudinaryFile(assetData, newName, resourceType) {
   try {
     const res = await cloudinary.api.update(assetData.public_id, {display_name: newName, resource_type: resourceType})
@@ -75,37 +86,15 @@ async function renameCloudinaryFile(assetData, newName, resourceType) {
   }
 }
 
-async function deleteFolderFromCloudinary(location) {
+async function renameFolderInCloudinary(fromPath, toPath)  {
   try {
-    const result = await cloudinary.api.delete_folder(location)
-    console.log(result);
-  }
-  catch (error) {
-    console.error("Error deleting from Cloudinary:", error);
-    throw error;
-  }
-}
-
-const renameFolder = async (fromPath, toPath) => {
-  const url = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/folders/${fromPath}?to_folder=${encodeURIComponent(toPath)}`;
-  
-  const credentials = btoa(`${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}`);
-  
-  try {
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Basic ${credentials}`
-      }
-    });
-    
-    const data = await response.json();
-    console.log('Folder renamed:', data);
-    return data;
+    const result = await cloudinary.api.rename_folder(fromPath, toPath);
+    console.log('Folder renamed:', result);
+    return result;
   } catch (error) {
     console.error('Error renaming folder:', error);
   }
 };
 
 
-module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary };
+module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary, renameFolderInCloudinary };

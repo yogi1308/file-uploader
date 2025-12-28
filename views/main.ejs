@@ -150,7 +150,7 @@
         btn.querySelector('span').textContent = assetData[toggleType] ? activeText : inactiveText
         btn.querySelector('svg').style.fill = assetData[toggleType] ? activeFill : ''
 
-        if (assetData.pinned) {
+        if (assetData.pinned && toggleType === 'pinned') {
             newPin = document.createElement('div')
             newPin.classList.add('pinned-folder', 'fl-horiz', 'width100')
             newPin.innerHTML = `
@@ -176,6 +176,8 @@
                 }
             })
         }
+
+        selectedElement.setAttribute('onclick', `assetClicked(event, ${JSON.stringify(assetData)})`)
         
         try {
             await fetch('/toggle', {
@@ -218,19 +220,39 @@
         inputElem.addEventListener('keydown', (e) => {e.key === 'Enter' && inputElem.blur()})
         inputElem.addEventListener('blur', async () => {
             const newNameElem = document.createElement('div')
-            newNameElem.classList.add('col-name')
-            inputElem.value === "" ? newNameElem.textContent = oldName : newNameElem.textContent = inputElem.value
+            newNameElem.classList.add('col-name', 'text-wrap')
+            const finalName = inputElem.value.trim() === "" ? oldName.trim() : inputElem.value.trim()
+            newNameElem.textContent = finalName
+            newNameElem.title = finalName
             inputElem.replaceWith(newNameElem)
-
-            try {
-                await fetch('/asset', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({newDisplayName: newNameElem.textContent, assetData: selectedAssetData})
-                })
+            const newAssetData = { ...selectedAssetData, name: newNameElem.textContent.trim() }
+            if (newAssetData.type  === 'folder') {
+                const newPath = `${newAssetData.location}/${newAssetData.name}`.replace('<%= user.id %>/', '')
+                newNameElem.closest('.list-row').setAttribute('ondblclick', `window.location.href='/?folder=${encodeURIComponent(newPath)}'`)
             }
-            catch {
-                alert('An error occurred while deleting the item.');
+            newNameElem.closest('.list-row').setAttribute('onclick', `assetClicked(event, ${JSON.stringify(newAssetData)})`)
+
+            if (newAssetData?.pinned) {
+                const pinned = Array.from(document.querySelectorAll('.pinned-folder p')).find(pinnedFolder => pinnedFolder.textContent.trim() === oldName.trim())
+                if (pinned) {
+                    pinned.textContent = newAssetData.name
+                    pinned.title = newAssetData.name
+                    const newPath = `${newAssetData.location}/${newAssetData.name}`.replace('<%= user.id %>/', '')
+                    pinned.setAttribute('onclick', `window.location.href='/?folder=${encodeURIComponent(newPath)}'`)
+                }
+            }
+
+            if (oldName.trim() !== newNameElem.textContent.trim()) {
+                try {
+                    await fetch('/asset', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({newDisplayName: newNameElem.textContent.trim(), assetData: selectedAssetData})
+                    })
+                }
+                catch {
+                    alert('An error occurred while deleting the item.');
+                }
             }
 
         })
