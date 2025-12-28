@@ -3,7 +3,8 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB } = require("../lib/queries");
+const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +14,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary} = require("../upload/cloudinary");
+const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary, renameCloudinaryFile} = require("../upload/cloudinary");
 
 
 
@@ -170,6 +171,25 @@ router.delete('/asset', isAuthenticated, express.json(), async (req, res) => {
       folders.forEach(file => {assetDbIds.push(file.id)})
       assetDbIds.push(`${req.body.assetData.id}`)
       await deleteFromDB(assetDbIds)
+    }
+  }
+  catch (error) {
+    console.error(error)
+    return res.status(500).json({ success: false, message: "Error deleting asset" })
+  }
+  
+  res.status(200).json({ success: true })
+})
+
+router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
+  try {
+    const owns = await checkUserOwnsAsset(req.user.id, req.body.assetData)
+    if (!owns) {
+      return res.status(403).json({ success: false, message: "Unauthorized" })
+    }
+    if (req.body.assetData.type !== 'folder') {
+      await renameCloudinaryFile(req.body.assetData, req.body.newDisplayName, getResourceType(req.body.assetData.type))
+      await renameFromDB(req.body.assetData, req.body.newDisplayName)
     }
   }
   catch (error) {

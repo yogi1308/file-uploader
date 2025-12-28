@@ -62,13 +62,13 @@ async function deleteFromCloudinary(assetId) {
   }
 }
 
-async function renameCloudinaryFile(publicId, newName, resourceType) {
+async function renameCloudinaryFile(assetData, newName, resourceType) {
   try {
-    const res = await cloudinary.api.update(publicId, {display_name: newName, resource_type: resourceType})
+    const res = await cloudinary.api.update(assetData.public_id, {display_name: newName, resource_type: resourceType})
   }
   catch (error) {
     if (error.error && error.error.http_code === 404 && resourceType === 'image') {
-      return await cloudinary.api.update(publicId, {display_name: newName, resource_type: 'raw'})
+      return await cloudinary.api.update(assetData.public_id, {display_name: newName, resource_type: 'raw'})
     }
     console.error("Error renaming in Cloudinary:", error);
     throw error;
@@ -85,5 +85,27 @@ async function deleteFolderFromCloudinary(location) {
     throw error;
   }
 }
+
+const renameFolder = async (fromPath, toPath) => {
+  const url = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/folders/${fromPath}?to_folder=${encodeURIComponent(toPath)}`;
+  
+  const credentials = btoa(`${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}`);
+  
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Basic ${credentials}`
+      }
+    });
+    
+    const data = await response.json();
+    console.log('Folder renamed:', data);
+    return data;
+  } catch (error) {
+    console.error('Error renaming folder:', error);
+  }
+};
+
 
 module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary };

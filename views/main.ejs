@@ -206,4 +206,34 @@
         }
     }
 
+    async function renameButtonClicked(event) {
+        const selectedAssetData = structuredClone(assetData)
+        resetSelection()
+        const oldName = selectedElement.querySelector('.col-name').textContent
+        const inputElem = document.createElement('input')
+        inputElem.classList.add('new-name')
+        inputElem.value = oldName
+        selectedElement.querySelector('.col-name').replaceWith(inputElem)
+        inputElem.select()
+        inputElem.addEventListener('keydown', (e) => {e.key === 'Enter' && inputElem.blur()})
+        inputElem.addEventListener('blur', async () => {
+            const newNameElem = document.createElement('div')
+            newNameElem.classList.add('col-name')
+            inputElem.value === "" ? newNameElem.textContent = oldName : newNameElem.textContent = inputElem.value
+            inputElem.replaceWith(newNameElem)
+
+            try {
+                await fetch('/asset', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({newDisplayName: newNameElem.textContent, assetData: selectedAssetData})
+                })
+            }
+            catch {
+                alert('An error occurred while deleting the item.');
+            }
+
+        })
+    }
+
 </script>
