@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder } = require("../lib/queries");
 const multer  = require('multer')
 const storage = multer.memoryStorage()
 const upload = multer({ 
@@ -13,7 +13,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary} = require("../upload/cloudinary");
+const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary} = require("../upload/cloudinary");
 
 
 
@@ -144,6 +144,40 @@ router.patch('/toggle', isAuthenticated, express.json(), async (req, res) => {
     console.error(error);
     res.status(500).send("Error updating item");
   }
+})
+
+router.delete('/asset', isAuthenticated, express.json(), async (req, res) => {
+  try {
+    const owns = await checkUserOwnsAsset(req.user.id, req.body.assetData)
+    if (!owns) {
+      return res.status(403).json({ success: false, message: "Unauthorized" })
+    }
+    
+    if (req.body.assetData.type !== 'folder') {
+      console.log("ran")
+      await deleteFromCloudinary([req.body.assetData.asset_id])
+      await deleteFromDB([req.body.assetData.id])
+    }
+    else {
+      assetDbIds = []
+      const [files, folders] = await getAllAssetsInsideAFolder(`${req.body.assetData.location}/${req.body.assetData.name}`)
+      if (files.length > 0) {
+        let filesAssetIds = []
+        files.forEach(file => {filesAssetIds.push(file.asset_id); assetDbIds.push(file.id)})
+        await deleteFromCloudinary(filesAssetIds)
+      }
+      await deleteFolderFromCloudinary(`${req.body.assetData.location}/${req.body.assetData.name}`)
+      folders.forEach(file => {assetDbIds.push(file.id)})
+      assetDbIds.push(`${req.body.assetData.id}`)
+      await deleteFromDB(assetDbIds)
+    }
+  }
+  catch (error) {
+    console.error(error)
+    return res.status(500).json({ success: false, message: "Error deleting asset" })
+  }
+  
+  res.status(200).json({ success: true })
 })
 
 module.exports = router;

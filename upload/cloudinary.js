@@ -52,13 +52,9 @@ const createNewUserFolder = async (userid) => {
   return await cloudinary.api.create_folder(`${userid}`)
 }
 
-const getFolders = async (userid, path) => {
-  return await cloudinary.api.sub_folders(`${userid}`)
-}
-
 async function deleteFromCloudinary(assetId) {
   try {
-    await cloudinary.api.delete_resources_by_asset_ids([assetId])
+    await cloudinary.api.delete_resources_by_asset_ids(assetId)
   }
   catch (error) {
     console.error("Error deleting from Cloudinary:", error);
@@ -79,6 +75,15 @@ async function renameCloudinaryFile(publicId, newName, resourceType) {
   }
 }
 
+async function deleteFolderFromCloudinary(location) {
+  try {
+    const result = await cloudinary.api.delete_folder(location)
+    console.log(result);
+  }
+  catch (error) {
+    console.error("Error deleting from Cloudinary:", error);
+    throw error;
+  }
+}
 
-
-module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, getFolders, deleteFromCloudinary, renameCloudinaryFile };
+module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary };
