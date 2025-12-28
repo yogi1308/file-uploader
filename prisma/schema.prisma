@@ -45,6 +45,7 @@ model Files {
   location     String
   asset_id     String
   public_id    String
+  version_id   String
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)

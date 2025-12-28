@@ -25,7 +25,8 @@ const uploadToCloudinary = async (req, res, next) => {
           resource_type: "auto",
           public_id: public_id,
           overwrite: false,
-          asset_folder: req.query.folder
+          asset_folder: req.query.folder,
+          backup: true
           // TODO: FIX ACCESS
         });
         if (result.existing) {
@@ -35,7 +36,7 @@ const uploadToCloudinary = async (req, res, next) => {
           break;
         }
       }
-      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id});
+      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id, version_id: result.version_id});
     }
     req.uploads = uploadURLS
     next()
@@ -96,5 +97,15 @@ async function renameFolderInCloudinary(fromPath, toPath)  {
   }
 };
 
+async function downloadAsset(assetId, versionId) {
+  try {
+    const result = cloudinary.utils.download_backedup_asset(assetId, versionId);
+    console.log('Folder downloaded:', result);
+    return result;
+  } catch (error) {
+    console.error('Error renaming folder:', error);
+  }
+}
 
-module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary, renameFolderInCloudinary };
+
+module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary, renameFolderInCloudinary, downloadAsset };
