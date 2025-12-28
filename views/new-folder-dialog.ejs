@@ -1,5 +1,9 @@
 <dialog class="new-folder-dialog card" style="width: 40vw;">
-    <form action="/upload-folder?folder=<%= encodeURIComponent(currFolder) %>" method="post" class="upload-form">
+    <% if (currFolder === 'recent' || currFolder === 'starred' || currFolder === 'videos' || currFolder === 'photos' || currFolder === 'documents') { %>
+        <form action="/upload-folder?folder=<%= encodeURIComponent(user.id) %>&redirect=<%= currFolder %>" method="post" class="upload-form">
+    <% } else { %>
+        <form action="/upload-folder?folder=<%= encodeURIComponent(currFolder) %>" method="post" class="upload-form">
+    <% } %>
         <label for="folderName">Folder Name</label>
         <input type="text" name="folderName" id="folderName" maxlength="100" value="<%= locals.folderName ? folderName : '' %>" pattern="^[^/\\:*?&quot;<>|]+$" title="Folder name cannot contain / \ : * ? &quot; < > |">
         <div class="file-form fl-horiz">

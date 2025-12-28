@@ -1,5 +1,9 @@
 <dialog class="card">
-    <form action="/upload?folder=<%= encodeURIComponent(currFolder) %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
+    <% if (currFolder === 'recent' || currFolder === 'starred' || currFolder === 'videos' || currFolder === 'photos' || currFolder === 'documents') { %>
+        <form action="/upload?folder=<%= encodeURIComponent(user.id) %>&redirect=<%= currFolder %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
+    <% } else { %>
+        <form action="/upload?folder=<%= encodeURIComponent(currFolder) %>" method="post" class="upload-form fl-vert" enctype="multipart/form-data">
+    <% } %>
         <input type="file" name="file" id="file" multiple >
         <div id="file-list"></div>
         <div class="file-form fl-horiz">

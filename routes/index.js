@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot } = require("../lib/queries");
 const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
@@ -103,7 +103,10 @@ router.post("/signup",
 
 router.post('/upload', isAuthenticated, upload.array('file'), uploadToCloudinary, async function (req, res) {
   try {
-    await fileUpload(req.user.id, req.uploads, req.query.folder)
+    req.query?.redirect === 'starred' ? await fileUpload(req.user.id, req.uploads, 'starred') : await fileUpload(req.user.id, req.uploads)
+    if (req.query.redirect) {
+      return res.redirect(`/${req.query.redirect}`)
+    }
     const redirectUrl = req.query.folder === req.user.id ? "/" : `/?folder=${encodeURIComponent(req.query.folder.substring(req.query.folder.indexOf('/') + 1))}`
     res.redirect(redirectUrl)
   }
@@ -120,7 +123,10 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
       throw new Error("Folder already exists");
     }
     const cloudFolder = await createFolderInCloudinary(req.query.folder, req.body.folderName);
-    await createFolder(req.user.id, cloudFolder)
+    req.query?.redirect === 'starred' ? await createFolder(req.user.id, cloudFolder, 'starred') : await createFolder(req.user.id, cloudFolder)
+    if (req.query.redirect) {
+      return res.redirect(`/${req.query.redirect}`)
+    }
     const redirectUrl = req.query.folder === req.user.id ? "/" : `/?folder=${encodeURIComponent(req.query.folder.substring(req.query.folder.indexOf('/') + 1))}`
     res.redirect(redirectUrl)
   }
@@ -128,7 +134,8 @@ router.post('/upload-folder', isAuthenticated, async (req, res) => {
     if (error.message === "Folder already exists") {
       const currFolder = req.user.id
       const assets = await getUserAssets(req.user.id, currFolder)
-      return res.render("index", { user: req.user, error: error.message, currFolder: currFolder, assets: assets });
+      const allAssets = await getAllAssets(req.user.id, 'folders')
+      return res.render("index", { user: req.user, error: error.message, currFolder: currFolder, assets: assets, allAssets: allAssets });
     }
     else {
       console.log(error)
@@ -155,7 +162,6 @@ router.delete('/asset', isAuthenticated, express.json(), async (req, res) => {
     }
     
     if (req.body.assetData.type !== 'folder') {
-      console.log("ran")
       await deleteFromCloudinary([req.body.assetData.asset_id])
       await deleteFromDB([req.body.assetData.id])
     }
@@ -202,6 +208,56 @@ router.patch('/asset', isAuthenticated, express.json(), async (req, res) => {
   }
   
   res.status(200).json({ success: true })
+})
+
+router.get('/recent', isAuthenticated, async (req, res) => {
+  try {
+    let allAssets = await getAllAssetsFromRoot(req.user.id)
+    res.render("index", { user: req.user, currFolder: 'recent', assets: allAssets.sort((a, b) => b.date - a.date), allAssets: allAssets})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/starred', isAuthenticated, async (req, res) => {
+  try {
+    let allAssets = await getAllAssetsFromRoot(req.user.id)
+    res.render("index", { user: req.user, currFolder: 'starred', assets: allAssets.filter(asset => asset.starred), allAssets: allAssets})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/videos', isAuthenticated, async (req, res) => {
+  try {
+    let allAssets = await getAllAssetsFromRoot(req.user.id)
+    res.render("index", { user: req.user, currFolder: 'videos', assets: allAssets.filter(asset => asset.type !== 'folder' && getResourceType(asset.type) === 'video'), allAssets: allAssets})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/photos', isAuthenticated, async (req, res) => {
+  try {
+    let allAssets = await getAllAssetsFromRoot(req.user.id)
+    res.render("index", { user: req.user, currFolder: 'photos', assets: allAssets.filter(asset => asset.type !== 'folder' && getResourceType(asset.type) === 'image'), allAssets: allAssets})
+  }
+  catch (error) {
+    console.error(error)
+  }
+})
+
+router.get('/documents', isAuthenticated, async (req, res) => {
+  try {
+    let allAssets = await getAllAssetsFromRoot(req.user.id)
+    res.render("index", { user: req.user, currFolder: 'documents', assets: allAssets.filter(asset => asset.type === 'pdf' || asset.type !== 'folder' && getResourceType(asset.type) === 'raw'), allAssets: allAssets})
+  }
+  catch (error) {
+    console.error(error)
+  }
 })
 
 module.exports = router;

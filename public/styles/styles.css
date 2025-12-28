@@ -168,6 +168,7 @@ navbar {
   border-right: var(--border);
   padding: var(--space-sm);
   gap: var(--space-sm);
+  overflow: auto;
 }
 
 .new-file, .new-folder {

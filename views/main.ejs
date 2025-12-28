@@ -1,14 +1,21 @@
 <div class="main fl-vert">
     <div class="breadcrumbs fl-horiz" >
         <span onclick="window.location.href='/'" class="pointer hover-underline"> <%= user.username %></span> 
-        <% let subfolderLink = '' %>
-        <% currFolder.split('/').slice(1).forEach(subfolder => { %>
-            <% subfolderLink !== '' ? subfolderLink += '/' + subfolder : subfolderLink = subfolder %>
+        <% if (currFolder === 'recent' || currFolder === 'starred' || currFolder === 'videos' || currFolder === 'photos' || currFolder === 'documents') { %>
             <span class="fl-horiz" >
                 <svg style="transform: rotate(-90deg);" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> 
-                <p onclick="window.location.href='/?folder=<%= encodeURIComponent(subfolderLink) %>'" class="pointer hover-underline" > <%= subfolder %> </p>
+                <p onclick="window.location.href='/<%=currFolder%>'" class="pointer hover-underline"><%=currFolder[0].toUpperCase() + currFolder.slice(1)%></p> 
             </span>
-        <% }) %>
+        <% } else { %>
+            <% let subfolderLink = '' %>
+            <% currFolder.split('/').slice(1).forEach(subfolder => { %>
+                <% subfolderLink !== '' ? subfolderLink += '/' + subfolder : subfolderLink = subfolder %>
+                <span class="fl-horiz" >
+                    <svg style="transform: rotate(-90deg);" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> 
+                    <p onclick="window.location.href='/?folder=<%= encodeURIComponent(subfolderLink) %>'" class="pointer hover-underline" > <%= subfolder %> </p>
+                </span>
+            <% }) %>
+        <% } %>
     </div>
     <% if (assets.length === 0) { %>
         <div class="nothing-uploaded">
