@@ -25,7 +25,8 @@ const uploadToCloudinary = async (req, res, next) => {
           resource_type: "auto",
           public_id: `${req.query.folder}/${public_id}`,
           overwrite: false,
-          asset_folder: req.query.folder
+          asset_folder: req.query.folder,
+          backup: true
           // TODO: FIX ACCESS
         });
         if (result.existing) {
@@ -35,7 +36,7 @@ const uploadToCloudinary = async (req, res, next) => {
           break;
         }
       }
-      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id});
+      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id, version_id: result.version_id});
     }
     req.uploads = uploadURLS
     next()
