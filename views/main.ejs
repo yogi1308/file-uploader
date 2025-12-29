@@ -269,20 +269,19 @@
 
     async function downloadOrViewAsset(event) {
         console.log(assetData)
+        const shouldView = !event.target.closest('button')
         try {
             const response = await fetch('/download', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({assetData: assetData})
+                body: JSON.stringify({assetData: assetData, shouldView})
             })
             const result = await response.json()
             if (result.success && result.downloadLink) {
-                if (event.target.closest('button')) {
+                if (shouldView) {
+                    window.open(result.downloadLink, '_blank')
+                } else {
                     window.location.href = result.downloadLink
-                }
-                else if (event.target.closest('.list-row')) {
-                    const viewLink = result.downloadLink.replace('fl_attachment', '')
-                    window.open(viewLink, '_blank')
                 }
             }
         }
