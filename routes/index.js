@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink } = require("../lib/queries");
 const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
@@ -14,7 +14,7 @@ const upload = multer({
     files: 5 // Limit to 5 files per upload
   }
 })
-const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary, renameCloudinaryFile, renameFolderInCloudinary} = require("../upload/cloudinary");
+const {createNewUserFolder, uploadToCloudinary, createFolderInCloudinary, deleteFromCloudinary, deleteFolderFromCloudinary, renameCloudinaryFile, renameFolderInCloudinary, downloadFolder} = require("../upload/cloudinary");
 
 
 
@@ -257,6 +257,21 @@ router.get('/documents', isAuthenticated, async (req, res) => {
   }
   catch (error) {
     console.error(error)
+  }
+})
+
+router.post('/download', isAuthenticated, express.json(), async(req, res) => {
+  try {
+    const owns = await checkUserOwnsAsset(req.user.id, req.body.assetData)
+    if (!owns) {
+      return res.status(403).json({ success: false, message: "Unauthorized" })
+    }
+    const downloadLink = req.body.assetData.type === 'folder' ? await downloadFolder(`${req.body.assetData.location}/${req.body.assetData.name}`, req.body.assetData.name) : await getdownloadLink(req.body.assetData)
+    res.status(200).json({ success: true, downloadLink })
+  }
+  catch (error) {
+    console.error(error)
+    res.status(500).json({ success: false, message: "Error processing download" })
   }
 })
 

@@ -23,7 +23,7 @@ const uploadToCloudinary = async (req, res, next) => {
       while (true) {
         result = await cloudinary.uploader.upload(dataURI, {
           resource_type: "auto",
-          public_id: public_id,
+          public_id: `${req.query.folder}/${public_id}`,
           overwrite: false,
           asset_folder: req.query.folder
           // TODO: FIX ACCESS
@@ -64,12 +64,42 @@ async function deleteFromCloudinary(assetId) {
 
 async function deleteFolderFromCloudinary(location) {
   try {
-    const result = await cloudinary.api.delete_folder(location)
-    console.log(result);
+    // Now delete empty subfolders and main folder
+    const deleteFolders = await cloudinary.api.delete_folder(location);
+    console.log(deleteFolders)
+    
+  } catch (error) {
+    error.message === 'Folder is not empty' && await deleteFolderFromCloudinaryTryHard(location)
   }
-  catch (error) {
-    console.error("Error deleting from Cloudinary:", error);
-    throw error;
+}
+
+async function deleteFolderFromCloudinaryTryHard(location) {
+  console.log(location)
+  try {
+    // Search for assets first
+    const searchResult = await cloudinary.search
+      .expression(`asset_folder:${location}/*`)
+      .execute();
+    console.log(searchResult);
+
+    // Delete images (default resource_type)
+    const deleteImages = await cloudinary.api.delete_resources_by_prefix(`${location}/`);
+    console.log('Images deleted:', deleteImages);
+
+    // Delete videos 
+    const deleteVideos = await cloudinary.api.delete_resources_by_prefix(`${location}/`, {resource_type: 'video'});
+    console.log('Videos deleted:', deleteVideos);
+
+    // Delete raw files
+    const deleteRaw = await cloudinary.api.delete_resources_by_prefix(`${location}/`, {resource_type: 'raw'});
+    console.log('Raw files deleted:', deleteRaw);
+
+    // Now delete empty subfolders and main folder
+    await cloudinary.api.delete_folder(location);
+    
+  } catch (error) {
+    console.error("Error:", error);
+    throw error
   }
 }
 
@@ -96,5 +126,16 @@ async function renameFolderInCloudinary(fromPath, toPath)  {
   }
 };
 
+async function downloadFolder(path, name) {
+  console.log(path)
+  try {
+    const result = cloudinary.utils.download_folder(path, {target_public_id: name});
+    console.log('Folder downloaded:', result);
+    return result;
+  } catch (error) {
+    console.error('Error renaming folder:', error);
+  }
+}
 
-module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary, renameFolderInCloudinary };
+
+module.exports = { uploadToCloudinary, createFolderInCloudinary, createNewUserFolder, deleteFromCloudinary, renameCloudinaryFile, deleteFolderFromCloudinary, renameFolderInCloudinary, downloadFolder };
