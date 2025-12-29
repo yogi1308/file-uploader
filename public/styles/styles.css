@@ -443,3 +443,44 @@ div.options svg {
   min-width: 20px;
   min-height: 20px;
 }
+
+/* Styling the Select Box itself */
+select#duration {
+    appearance: none; /* Removes native arrow/styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background-color: #2b2b2b; /* Dark grey from your image */
+    color: #ffffff;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-family: sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    
+    /* Adding a custom arrow since 'appearance: none' removes it */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+/* Hover & Focus states */
+select#duration:hover {
+    border-color: #666;
+}
+
+select#duration:focus {
+    outline: none;
+    border-color: #7ebafc; /* Light blue border on focus */
+}
+
+/* Styling the dropdown options */
+/* NOTE: Styling <option> is limited. Browsers only allow 
+   background-color and color in most cases. */
+select#duration option {
+    background-color: #2b2b2b;
+    color: white;
+    padding: 10px;
+}

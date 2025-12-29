@@ -1,0 +1,21 @@
+<dialog class="share card">
+    <div class="fl-vert">
+        <div>
+            <p>Share Folder</p>
+            <p>Generate a public link to share the current folder and its contents</p>
+        </div>
+        <form action="/share" style="width: 100%;">
+            <label for="duration">Duration</label>
+            <select name="duration" id="duration" style="width: 100%; padding: var(--space-xs);" class="card">
+                <option value="1hr">1 Hour</option>
+                <option value="1day">1 Day</option>
+                <option value="1week">1 Week</option>
+                <option value="30days">30 Days</option>
+            </select>
+        </form>
+        <div class="file-form fl-horiz">
+            <button type="submit">Upload</button>
+            <button class="cancel" type="button" onclick="document.querySelector('dialog.share').close()">Cancel</button>
+        </div>
+    </div>
+</dialog>

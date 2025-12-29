@@ -15,6 +15,7 @@
         <%- include('main', {user: user, currFolder: currFolder, assets: assets}) %>
         <%- include('upload', {currFolder: currFolder})%>
         <%- include('new-folder-dialog', {user: user, currFolder: currFolder}) %>
+        <%- include('share')%>
     </div>
     <% if (locals.error) { %>
         <script>
