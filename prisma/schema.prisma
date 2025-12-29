@@ -45,7 +45,6 @@ model Files {
   location     String
   asset_id     String
   public_id    String
-  version_id   String
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -62,6 +61,7 @@ model Folders {
   starred    Boolean  @default(false) @db.Boolean
   pinned     Boolean  @default(false) @db.Boolean
   type       String   @default("folder")
+  originalNameAndPath String
 
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)

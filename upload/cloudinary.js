@@ -67,7 +67,7 @@ async function deleteFolderFromCloudinary(location) {
   try {
     // Now delete empty subfolders and main folder
     const deleteFolders = await cloudinary.api.delete_folder(location);
-    console.log(deleteFolders)
+    console.log(deleteFolders, "ran2")
     
   } catch (error) {
     error.message === 'Folder is not empty' && await deleteFolderFromCloudinaryTryHard(location)
@@ -99,7 +99,7 @@ async function deleteFolderFromCloudinaryTryHard(location) {
     await cloudinary.api.delete_folder(location);
     
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error deleting folder structure:", error);
     throw error
   }
 }
@@ -134,7 +134,7 @@ async function downloadFolder(path, name) {
     console.log('Folder downloaded:', result);
     return result;
   } catch (error) {
-    console.error('Error renaming folder:', error);
+    console.error('Error downloading folder:', error);
   }
 }
 

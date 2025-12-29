@@ -266,7 +266,7 @@ router.post('/download', isAuthenticated, express.json(), async(req, res) => {
     if (!owns) {
       return res.status(403).json({ success: false, message: "Unauthorized" })
     }
-    const downloadLink = req.body.assetData.type === 'folder' ? await downloadFolder(`${req.body.assetData.location}/${req.body.assetData.name}`, req.body.assetData.name) : await getdownloadLink(req.body.assetData, req.body.shouldView)
+    const downloadLink = req.body.assetData.type === 'folder' ? await downloadFolder(`${req.body.assetData.originalNameAndPath}`, req.body.assetData.name) : await getdownloadLink(req.body.assetData, req.body.shouldView)
     res.status(200).json({ success: true, downloadLink })
   }
   catch (error) {
