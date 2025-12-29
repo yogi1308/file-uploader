@@ -56,8 +56,9 @@
                 <div class="pointer col-type dropdown" onclick="filterAndSort(event)" >
                     <div class="pointer fl-horiz dropdown-text pointer" ><span>Type</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
                     <div class="pointer dropdown-options card">
+                        <div class="pointer sort-type" onclick="filterAndSort(event, 'type', 'all')">All</div>
                         <% [...new Set(assets.map(asset => asset.type))].forEach(type => { %>
-                            <div class="pointer" onclick="filterAndSort(event)"><%= type %></div>
+                            <div class="pointer sort-type" onclick="filterAndSort(event, 'type', '<%= type %>')"><%= type %></div>
                         <% }) %>
                     </div>
                 </div>
@@ -283,6 +284,21 @@
         catch (error) {
             alert('An error occurred while downloading the item.');
             console.log(error)
+        }
+    }
+
+    async function filterAndSort(e, clickedOn, type) {
+        if (clickedOn === 'type') {
+            resetSelection()
+            const rows = document.querySelectorAll('.list-row')
+            rows.forEach(row => {
+                const rowType = row.querySelector('.col-type').textContent.trim()
+                if (type === 'all' || rowType === type) {
+                    row.style.display = ''
+                } else {
+                    row.style.display = 'none'
+                }
+            })
         }
     }
 

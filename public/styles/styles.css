@@ -365,6 +365,10 @@ div.options svg {
 
 .pin:hover svg {fill: white !important;}
 
+.sort-type {transition: all 0.2s ease; padding: var(--space-xs); border-radius: 5px;}
+
+.sort-type:hover {background-color: var(--primary);}
+
 
 
 ::-webkit-scrollbar {
