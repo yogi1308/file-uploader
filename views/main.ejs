@@ -51,17 +51,17 @@
         </div>
         <div class="list fl-vert" >
             <div class="list-header">
-                <div class="col-name fl-horiz"><span>Name</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
-                <div class="col-date fl-horiz"><span>Date Created</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
-                <div class="col-type dropdown">
-                    <div class="fl-horiz dropdown-text pointer"><span>Type</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
-                    <div class="dropdown-options card">
+                <div class="pointer col-name fl-horiz" onclick="filterAndSort(event)" ><span>Name</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                <div class="pointer col-date fl-horiz" onclick="filterAndSort(event)" ><span>Date Created</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                <div class="pointer col-type dropdown" onclick="filterAndSort(event)" >
+                    <div class="pointer fl-horiz dropdown-text pointer" ><span>Type</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                    <div class="pointer dropdown-options card">
                         <% [...new Set(assets.map(asset => asset.type))].forEach(type => { %>
-                            <div class="pointer"><%= type %></div>
+                            <div class="pointer" onclick="filterAndSort(event)"><%= type %></div>
                         <% }) %>
                     </div>
                 </div>
-                <div class="col-size fl-horiz"><span>Size</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                <div class="pointer col-size fl-horiz" onclick="filterAndSort(event)" ><span>Size</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
             </div>
             <div class="fl-vert assets-list-container">
                 <% assets.forEach(asset => { %>
