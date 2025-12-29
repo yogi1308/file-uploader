@@ -301,9 +301,19 @@ input:focus {outline: var(--border)}
 
 .breadcrumbs {padding: var(--space-xs);}
 
-.filters-and-options {justify-content: space-between;}
-
 .filters.fl-horiz > div, .options button {padding: var(--space-sm);}
+
+.options {width: min-content;}
+
+.dropdown {position: relative;}
+
+.dropdown-options {
+  display: none;
+  position: absolute; 
+  padding: var(--space-xs);
+}
+
+.dropdown:hover .dropdown-options {display: block;}
 
 div.options svg {
   min-height: 1rem;
