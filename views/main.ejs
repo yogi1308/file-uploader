@@ -51,10 +51,10 @@
         </div>
         <div class="list fl-vert" >
             <div class="list-header">
-                <div class="pointer col-name fl-horiz" onclick="filterAndSort(event)" ><span>Name</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
-                <div class="pointer col-date fl-horiz" onclick="filterAndSort(event)" ><span>Date Created</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                <div class="pointer col-name fl-horiz" onclick="filterAndSort(event, 'name')" ><span>Name</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" class="sort-arrow" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                <div class="pointer col-date fl-horiz" onclick="filterAndSort(event, 'date')" ><span>Date Created</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" class="sort-arrow" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
                 <div class="pointer col-type dropdown" onclick="filterAndSort(event)" >
-                    <div class="pointer fl-horiz dropdown-text pointer" ><span>Type</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                    <div class="pointer fl-horiz dropdown-text pointer" ><span>Type</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" class="sort-arrow" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
                     <div class="pointer dropdown-options card">
                         <div class="pointer sort-type" onclick="filterAndSort(event, 'type', 'all')">All</div>
                         <% [...new Set(assets.map(asset => asset.type))].forEach(type => { %>
@@ -62,11 +62,11 @@
                         <% }) %>
                     </div>
                 </div>
-                <div class="pointer col-size fl-horiz" onclick="filterAndSort(event)" ><span>Size</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
+                <div class="pointer col-size fl-horiz" onclick="filterAndSort(event, 'size')" ><span>Size</span><svg xmlns="http://www.w3.org/2000/svg" height="24px" class="sort-arrow" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg> </div>
             </div>
             <div class="fl-vert assets-list-container">
                 <% assets.forEach(asset => { %>
-                    <div class="list-row card" onclick="assetClicked(event, <%= JSON.stringify(asset) %>)"
+                    <div class="list-row card" data-id="<%= asset.id %>" onclick="assetClicked(event, <%= JSON.stringify(asset) %>)"
                     <% if (asset.type === 'folder') { %>
                         ondblclick=" window.location.href='/?folder=<%= encodeURIComponent((asset.location + '/' + asset.name).replace(user.id + '/', '')) %>'"
                     <% } else {%> 
@@ -92,9 +92,24 @@
 </div>
 <script>
 
+    const assets = <%- JSON.stringify(assets) %>;
     let assetData = ''
     let selectedElement = null
     const optionsDiv = document.querySelector('.options')
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!localStorage.getItem('sort')) localStorage.setItem('sort', 'date')
+        if (!localStorage.getItem('order')) localStorage.setItem('order', 'desc')
+
+        const sort = localStorage.getItem('sort')
+        const order = localStorage.getItem('order')
+
+        if (order === 'asc') {
+            const arrow = document.querySelector(`.col-${sort} .sort-arrow`)
+            if (arrow) arrow.style.rotate = '-180deg'
+        }
+        applySort()
+    })
 
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.list-row') && !e.target.closest('.options')) {
@@ -287,7 +302,7 @@
         }
     }
 
-    async function filterAndSort(e, clickedOn, type) {
+    async function filterAndSort(e, clickedOn, type = null) {
         if (clickedOn === 'type') {
             resetSelection()
             const rows = document.querySelectorAll('.list-row')
@@ -300,6 +315,53 @@
                 }
             })
         }
+        else if (clickedOn === 'name' || clickedOn === 'date' || clickedOn === 'size' ) {
+            const currentSort = localStorage.getItem('sort');
+            const currentOrder = localStorage.getItem('order');
+
+            if (currentSort === clickedOn) {
+                localStorage.setItem('order', currentOrder === 'asc' ? 'desc' : 'asc');
+            } else {
+                localStorage.setItem('sort', clickedOn);
+                localStorage.setItem('order', 'asc');
+            }
+            document.querySelectorAll('.sort-arrow').forEach(arrow => arrow.style.rotate = '0deg')
+            if (localStorage.getItem('order') === 'asc') {
+                e.currentTarget.querySelector('.sort-arrow').style.rotate = '-180deg'
+            }
+            applySort()
+        }
+    }
+
+    function applySort() {
+        const sort = localStorage.getItem('sort')
+        const order = localStorage.getItem('order')
+        const container = document.querySelector('.assets-list-container')
+        const rowMap = new Map()
+        document.querySelectorAll('.list-row').forEach(row => rowMap.set(row.dataset.id, row))
+
+        assets.sort((a, b) => {
+            let valA = a[sort]
+            let valB = b[sort]
+
+            if (sort === 'name') {
+                valA = String(valA).toLowerCase()
+                valB = String(valB).toLowerCase()
+                return order === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA)
+            }
+            
+            if (sort === 'date') {
+                valA = new Date(valA).getTime() || 0
+                valB = new Date(valB).getTime() || 0
+            }
+            
+            return order === 'asc' ? valA - valB : valB - valA
+        })
+
+        assets.forEach(asset => {
+            const row = rowMap.get(String(asset.id))
+            if (row) container.appendChild(row)
+        })
     }
 
 </script>

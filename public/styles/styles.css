@@ -339,6 +339,10 @@ div.options svg {
   gap: 10px;
 }
 
+.list-header > *, .list-row > * {
+  min-width: 0;
+}
+
 .list {
   gap: var(--space-xs);
   min-height: 0;
@@ -368,6 +372,8 @@ div.options svg {
 .sort-type {transition: all 0.2s ease; padding: var(--space-xs); border-radius: 5px;}
 
 .sort-type:hover {background-color: var(--primary);}
+
+.sort-arrow {transition: all 0.2s ease;}
 
 
 
