@@ -25,8 +25,7 @@ const uploadToCloudinary = async (req, res, next) => {
           resource_type: "auto",
           public_id: `${req.query.folder}/${public_id}`,
           overwrite: false,
-          asset_folder: req.query.folder,
-          backup: true
+          asset_folder: req.query.folder
           // TODO: FIX ACCESS
         });
         if (result.existing) {
@@ -36,7 +35,7 @@ const uploadToCloudinary = async (req, res, next) => {
           break;
         }
       }
-      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id, version_id: result.version_id});
+      uploadURLS.push({name: result.display_name, dateCreated: new Date(result.created_at), url: result.secure_url, folder: result.asset_folder, size: result.bytes, asset_id: result.asset_id, public_id: result.public_id});
     }
     req.uploads = uploadURLS
     next()
@@ -63,18 +62,18 @@ async function deleteFromCloudinary(assetId) {
   }
 }
 
-async function deleteFolderFromCloudinary(location) {
+async function deleteFolderFromCloudinary(location, originalNameAndPath) {
   try {
     // Now delete empty subfolders and main folder
     const deleteFolders = await cloudinary.api.delete_folder(location);
     console.log(deleteFolders, "ran2")
     
   } catch (error) {
-    error.message === 'Folder is not empty' && await deleteFolderFromCloudinaryTryHard(location)
+    error.error.message === 'Folder is not empty' && await deleteFolderFromCloudinaryTryHard(location, originalNameAndPath)
   }
 }
 
-async function deleteFolderFromCloudinaryTryHard(location) {
+async function deleteFolderFromCloudinaryTryHard(location, originalNameAndPath) {
   console.log(location)
   try {
     // Search for assets first
@@ -99,8 +98,36 @@ async function deleteFolderFromCloudinaryTryHard(location) {
     await cloudinary.api.delete_folder(location);
     
   } catch (error) {
-    console.error("Error deleting folder structure:", error);
-    throw error
+    error.error.message === 'Folder is not empty' && await deleteFolderFromCloudinaryTryHarder(location, originalNameAndPath)
+  }
+}
+
+async function deleteFolderFromCloudinaryTryHarder(location, originalNameAndPath) {
+  console.log(originalNameAndPath)
+  try {
+    // Search for assets first
+    const searchResult = await cloudinary.search
+      .expression(`asset_folder:${originalNameAndPath}/*`)
+      .execute();
+    console.log(searchResult);
+
+    // Delete images (default resource_type)
+    const deleteImages = await cloudinary.api.delete_resources_by_prefix(`${originalNameAndPath}/`);
+    console.log('Images deleted:', deleteImages);
+
+    // Delete videos 
+    const deleteVideos = await cloudinary.api.delete_resources_by_prefix(`${originalNameAndPath}/`, {resource_type: 'video'});
+    console.log('Videos deleted:', deleteVideos);
+
+    // Delete raw files
+    const deleteRaw = await cloudinary.api.delete_resources_by_prefix(`${originalNameAndPath}/`, {resource_type: 'raw'});
+    console.log('Raw files deleted:', deleteRaw);
+
+    // Now delete empty subfolders and main folder
+    await cloudinary.api.delete_folder(location);
+    
+  } catch (error) {
+    console.error(error);
   }
 }
 

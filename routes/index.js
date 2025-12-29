@@ -173,7 +173,7 @@ router.delete('/asset', isAuthenticated, express.json(), async (req, res) => {
         files.forEach(file => {filesAssetIds.push(file.asset_id); assetDbIds.push(file.id)})
         await deleteFromCloudinary(filesAssetIds)
       }
-      await deleteFolderFromCloudinary(`${req.body.assetData.location}/${req.body.assetData.name}`)
+      await deleteFolderFromCloudinary(`${req.body.assetData.location}/${req.body.assetData.name}`, `${req.body.assetData.originalNameAndPath}`)
       folders.forEach(file => {assetDbIds.push(file.id)})
       assetDbIds.push(`${req.body.assetData.id}`)
       await deleteFromDB(assetDbIds)
