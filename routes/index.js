@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink, searchAssets } = require("../lib/queries");
 const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
@@ -272,6 +272,18 @@ router.post('/download', isAuthenticated, express.json(), async(req, res) => {
   catch (error) {
     console.error(error)
     res.status(500).json({ success: false, message: "Error processing download" })
+  }
+})
+
+router.get('/search', isAuthenticated, async (req, res) => {
+  try {
+    const assets = await searchAssets(req.user.id, req.query.query)
+    const allAssets = await getAllAssets(req.user.id, 'folders')
+    res.render("index", { user: req.user, currFolder: 'search', assets: assets, allAssets: allAssets})
+  }
+  catch (error) {
+    console.error(error)
+    res.redirect('/')
   }
 })
 
