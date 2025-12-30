@@ -287,4 +287,9 @@ router.get('/search', isAuthenticated, async (req, res) => {
   }
 })
 
+router.post('/share', isAuthenticated, express.json(), async(req, res) => {
+  console.log(req.body)
+  res.status(200).json({ success: true, link: "hello world" })
+})
+
 module.exports = router;
