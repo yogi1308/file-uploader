@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink, searchAssets } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink, searchAssets, generateLink } = require("../lib/queries");
 const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
@@ -289,7 +289,17 @@ router.get('/search', isAuthenticated, async (req, res) => {
 
 router.post('/share', isAuthenticated, express.json(), async(req, res) => {
   console.log(req.body)
-  res.status(200).json({ success: true, link: "hello world" })
+  const owns = await checkUserOwnsAsset(req.user.id, req.body.assetData)
+  if (!owns) {
+    return res.status(403).json({ success: false, message: "Unauthorized" })
+  }
+  const share = await generateLink(req.user.id, req.body.formData, req.body.assetData)
+  console.log(share)
+  res.status(200).json({ success: true, link: `${req.protocol}://${req.get('host')}/s/${share.id}` })
+})
+
+router.get('/s', async (req, res) => {
+  
 })
 
 module.exports = router;

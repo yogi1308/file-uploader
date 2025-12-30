@@ -5,14 +5,17 @@
             <p>Generate a public link to share the current folder and its contents</p>
         </div>
         <form id="share-form" action="/share" method="post" style="width: 100%;" class="fl-vert">
-            <label for="duration">Duration</label>
-            <select name="duration" id="duration" style="width: 100%; padding: var(--space-xs);" class="card">
-                <option value="1hr">1 Hour</option>
-                <option value="1day">1 Day</option>
-                <option value="1week">1 Week</option>
-                <option value="30days">30 Days</option>
-            </select>
-            <div class="link"></div>
+            <div>
+                <label for="duration">Expires After</label>
+                <select name="duration" id="duration" style="width: 100%; padding: var(--space-xs);" class="card">
+                    <option value="1hr">1 Hour</option>
+                    <option value="1day">1 Day</option>
+                    <option value="1week">1 Week</option>
+                    <option value="30days">30 Days</option>
+                    <option value="never">Never</option>
+                </select>
+            </div>
+            <div class="link card"></div>
             <div class="file-form fl-horiz">
                 <button type="submit">Share</button>
                 <button class="cancel" type="button" onclick="document.querySelector('dialog.share').close()">Close</button>
@@ -22,15 +25,18 @@
     <script>
         document.getElementById('share-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            const jsonData = Object.fromEntries(formData.entries());
+            const formData = document.querySelector('select').value
             const response = await fetch('/share', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(jsonData)
+                body: JSON.stringify({formData: formData, assetData: assetData})
             });
             const result = await response.json();
-            document.querySelector('div.link').innerText = result.link;
+            document.querySelector('.link').innerHTML = `<div>${result.link}</div> <svg class="copy pointer" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`
+            document.querySelector('.copy').addEventListener('click', () => {
+                // Copy the text inside the text field
+                navigator.clipboard.writeText(result.link);
+            })
         });
     </script>
 </dialog>

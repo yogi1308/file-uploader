@@ -29,6 +29,7 @@ model User {
 
   files         Files[]
   folders       Folders[]
+  shared        Shared[]
   
 
   @@map("users")
@@ -67,4 +68,17 @@ model Folders {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("folder")
+}
+
+model Shared {
+  id         String @id @default(uuid())
+  assetId    String
+  date       DateTime
+  expires       DateTime?
+  assetType  String
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("shared")
 }

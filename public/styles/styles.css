@@ -489,3 +489,17 @@ select#duration option {
   border: var(--border);
   margin: var(--space-xs);
 }
+
+.link:empty {display: none;}
+
+.link { padding: var(--space-xs); position: relative;}
+
+.copy {
+  position: absolute;
+  right: 0px;
+  top: 5px;
+}
+
+dialog.share {width: clamp(500px, 30vw, 100rem);}
+
+.link > div {width: calc(100% - 1.3rem); overflow-x: auto; white-space: nowrap;}

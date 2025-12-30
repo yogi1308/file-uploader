@@ -113,7 +113,7 @@
     })
 
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.list-row') && !e.target.closest('.options')) {
+        if (!e.target.closest('.list-row') && !e.target.closest('.options') && !e.target.closest('.share')) {
             resetSelection()
         }
     })
