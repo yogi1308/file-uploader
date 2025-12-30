@@ -17,7 +17,7 @@
             </div>
             <div class="link card"></div>
             <div class="file-form fl-horiz">
-                <button type="submit">Share</button>
+                <button type="submit">Generate Link</button>
                 <button class="cancel" type="button" onclick="document.querySelector('dialog.share').close()">Close</button>
             </div>
         </form>
@@ -36,7 +36,22 @@
             document.querySelector('.copy').addEventListener('click', () => {
                 // Copy the text inside the text field
                 navigator.clipboard.writeText(result.link);
+                toast.style.display = 'block'
+                setTimeout(() => {
+                    toast.style.display = 'none'
+                }, 2000)
             })
         });
+        const toast = document.createElement('div')
+        toast.textContent = 'Copied'
+        toast.classList.add('card')
+        toast.style.position = 'absolute'
+        toast.style.bottom = '4.4rem'
+        toast.style.right = '-1rem'
+        toast.style.transform = 'translateX(-50%)'
+        toast.style.padding = '0.5rem'
+        toast.style.display = 'none'
+        toast.style.zIndex = '1000'
+        document.querySelector('dialog.share').appendChild(toast)
     </script>
 </dialog>

@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
-const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink, searchAssets, generateLink } = require("../lib/queries");
+const { createUser, fileUpload, getUserAssets, getAllAssets, checkFolderExists, createFolder, toggle, checkUserOwnsAsset, deleteFromDB, getAllAssetsInsideAFolder, renameFromDB, renameFromDBWhenFolderRenamed, getAllAssetsFromRoot, getdownloadLink, searchAssets, generateLink, checkValididityForSharedContent, getFolder } = require("../lib/queries");
 const {getResourceType} = require('../util/utilFunctions')
 const multer  = require('multer')
 const storage = multer.memoryStorage()
@@ -288,18 +288,34 @@ router.get('/search', isAuthenticated, async (req, res) => {
 })
 
 router.post('/share', isAuthenticated, express.json(), async(req, res) => {
-  console.log(req.body)
   const owns = await checkUserOwnsAsset(req.user.id, req.body.assetData)
   if (!owns) {
     return res.status(403).json({ success: false, message: "Unauthorized" })
   }
   const share = await generateLink(req.user.id, req.body.formData, req.body.assetData)
-  console.log(share)
   res.status(200).json({ success: true, link: `${req.protocol}://${req.get('host')}/s/${share.id}` })
 })
 
-router.get('/s', async (req, res) => {
-  
+router.get('/s/:id', async (req, res) => {
+  try {
+    const share = await checkValididityForSharedContent(req.params.id)
+    if (!share) {
+      return res.status(404).send("Link expired or invalid")
+    }
+
+    let downloadLink
+    if (share.assetType === 'folder') {
+      const assetData = await getFolder(share.assetId)
+      downloadLink = await downloadFolder(assetData.originalNameAndPath, assetData.name)
+    } else {
+      downloadLink = await getdownloadLink({ id: share.assetId }, false)
+    }
+    
+    res.send(`<script>window.location.href = '${downloadLink}'; setTimeout(function() { window.close(); }, 1000);</script>`)
+  } catch (error) {
+    console.error(error)
+    res.send("Problem with getting the shared content")
+  }
 })
 
 module.exports = router;
