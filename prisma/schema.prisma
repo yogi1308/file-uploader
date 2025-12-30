@@ -6,11 +6,12 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  // Remove the output line: output = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Session {

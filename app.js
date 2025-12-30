@@ -44,11 +44,14 @@ app.use((req, res, next) => {
 app.use("/", indexRouter)
 
 const PORT = process.env.PORT;
-app.listen(PORT, (error) => {
-  if (error) {
-    throw error;
-  }
-  console.log(`Listening on port ${PORT}!`);
-});
+
+if (require.main === module) {
+  app.listen(PORT, (error) => {
+    if (error) {
+      throw error;
+    }
+    console.log(`Listening on port ${PORT}!`);
+  });
+}
 
 module.exports = app;
